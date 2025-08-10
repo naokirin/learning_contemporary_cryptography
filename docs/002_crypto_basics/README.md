@@ -213,3 +213,55 @@ flowchart LR
 - MAC: `src/mac/hmac_sha256.ts`（説明: `docs/mac/README.md`）
 - 署名: `src/signature/ed25519.ts`（説明: `docs/signature/README.md`）
 - セキュリティの6要素: `docs/001_infosec/README.md` 
+
+## 8. 情報理論的安全性（Information-theoretic Security）
+- **目的/定義**: 攻撃者に計算資源の制限を一切課さない（無限の計算力を仮定してもよい）状況でも安全性が成り立つ性質。Shannon の「完全秘匿性（Perfect Secrecy）」が代表例。
+- **代表例**:
+  - ワンタイムパッド（Vernam/OTP）: 鍵が真にランダム・平文と同長・一度限りの使用で完全秘匿性を実現。
+  - Shamir の秘密分散（t-of-n）: 閾値未満の断片からは情報が得られない（情報理論的秘匿）。
+  - Wegman–Carter MAC: 情報理論的に安全な認証コード（鍵を使い捨て）。
+- **計算量的安全性との違い**:
+  - 計算量的安全性: 難解問題の仮定や計算資源の有限性に依存（RSA/ECC/AES 等）。理論上、十分な計算資源があれば破られる可能性あり。
+  - 情報理論的安全性: 困難性仮定に依存せず、攻撃者の能力に依らず成立。ただし運用要件（鍵長・鍵配送など）のコストが非常に高い。
+- **OTP が安全になる条件**:
+  - 鍵は真にランダム（高エントロピー）である。
+  - 鍵長はメッセージ長と同じである。
+  - 鍵は一度だけ使用し、再利用しない（再利用は即破綻）。
+  - 鍵は安全な経路で共有・保護される。
+- **実務上の含意**:
+  - 大容量や頻繁な通信では鍵配送・保管のコストが現実的でないため、一般には計算量的安全性（AEAD、公開鍵暗号、デジタル署名）を用いる。
+  - ただし、超高機密・限定用途（一次性鍵線、秘密分散によるバックアップ、使い捨てトークン、量子耐性の一部構成）では依然有用。
+- **関連**: `docs/003_symmetric/vernam.md`
+
+```mermaid
+flowchart LR
+  M[平文]:::data --> X("⊕（XOR）"):::action --> C[暗号文]:::data
+  K["鍵(真にランダム・同長・一度限り)"]:::data -.条件.-> X
+
+  classDef action fill:#FFF3BF,stroke:#B58900,stroke-width:1px,color:#333;
+  classDef data fill:#E6F3FF,stroke:#1E88E5,stroke-width:1px,color:#111;
+``` 
+
+### 数式での定義（Shannon 完全秘匿性）
+- **設定**: 確率変数 \(M\)（平文）, \(K\)（鍵）, \(C=\mathrm{Enc}_K(M)\)（暗号文）。通常 \(M \perp K\) を仮定。
+- **定義（完全秘匿性）**:
+  \[
+  \forall\,P_M,\ \forall\,m,\ \forall\,c\ \text{with}\ \Pr[C=c] > 0:\quad \Pr[M=m\mid C=c] = \Pr[M=m].
+  \]
+  暗号文 \(c\) を観測しても平文の事後分布が変化しない（事前分布と同一）。
+- **同値な表現**:
+  \[
+  \forall\,m,c:\ \Pr[C=c\mid M=m] = \Pr[C=c] \\
+  \quad\Longleftrightarrow\quad
+  M \perp 
+  \quad\Longleftrightarrow\quad I(M;C)=0
+  \quad\Longleftrightarrow\quad H(M\mid C)=H(M).
+  \]
+- **必要条件の一例（離散・有限集合の典型設定）**:
+  \[
+  H(K) \ge H(M) \quad (\text{特に } K \text{ が一様なら } |\mathcal{K}| \ge |\mathcal{M}| ).
+  \]
+- **OTP の達成条件（代表達成例）**:
+  - \(K\) は真にランダムかつ一様で、\(M\) と独立。
+  - \(|K| = |M|\)（鍵長＝平文長）。
+  - 鍵は一度限りの使用（再利用禁止）。
