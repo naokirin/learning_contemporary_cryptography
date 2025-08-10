@@ -169,6 +169,35 @@ flowchart LR
   classDef unsafe fill:#FFD6D6,stroke:#C62828,stroke-width:1px,color:#7f0000;
 ```
 
+## 7. ケルクホフスの原理（Kerckhoffs's principle）
+- 目的/趣旨: 暗号方式の安全性は「鍵の秘密性」にのみ依存し、方式・アルゴリズム・実装は公開されていても安全であるべき。
+- 要点:
+  - アルゴリズムは公開・レビュー可能であること（セキュリティは obscurity に依存しない）。
+  - 秘匿すべきは鍵のみ。鍵管理（生成・保存・ローテーション・破棄）が中核。
+  - 方式が漏洩・解析されても、鍵を知られない限り実用的攻撃が成立しない設計にする。
+- 実務上の含意:
+  - オープンな標準と実装を採用し、コミュニティ/第三者評価を受ける。
+  - 自作暗号は避け、十分に分析された方式（AES-GCM、Ed25519、HMAC-SHA-256 など）を利用。
+  - 構成の安全性は鍵分離、KDF、AEAD、定数時間比較などの原則に基づいて担保する。
+
+```mermaid
+flowchart LR
+  ALG[方式/アルゴリズム]:::public
+  IMPL[実装]:::public
+  KEY[鍵]:::secret
+  USE(暗号・署名・MAC 等):::action
+
+  ALG --> USE
+  IMPL --> USE
+  KEY --> USE
+
+  classDef action fill:#FFF3BF,stroke:#B58900,stroke-width:1px,color:#333;
+  classDef public fill:#E6F3FF,stroke:#1E88E5,stroke-width:1px,color:#111;
+  classDef secret fill:#FFD6D6,stroke:#C62828,stroke-width:1px,color:#7f0000;
+```
+
+- 関連: `docs/001_infosec/README.md`（セキュリティ原則）、AEAD（`src/symmetric/aes_gcm.ts`）、MAC（`src/mac/hmac_sha256.ts`）、署名（`src/signature/ed25519.ts`）
+
 ---
 
 ### 相互関係のイメージ
