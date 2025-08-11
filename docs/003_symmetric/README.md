@@ -45,6 +45,7 @@
   - モード例: ECB（非推奨: パターン漏洩）、CBC/CFB/OFB/CTR、XTS（ストレージ向け）、GCM（AEAD・推奨）。
   - CTR/GCM 等は \(\text{nonce}\) 一意性が必須。モード選択と運用が安全性を大きく左右。
   - 詳細は [ブロック暗号](./block_ciphers.md) を参照。
+  - 歴史的方式（非推奨）: [DES](./des.md)
 
 ## 実務の要点（ベストプラクティス）
 - 認証付き暗号（AEAD: AES-GCM または ChaCha20-Poly1305）を使用。
@@ -57,6 +58,7 @@
 - AES-GCM（推奨 AEAD。ハードウェア最適化が豊富）
 - ChaCha20-Poly1305（ソフトウェアで高速、モバイルや組込みで有利）
 - RC4 は歴史的に広く使われたが、現代では安全でないため非推奨
+- DES（歴史的・非推奨）: 詳細は [DES](./des.md)
 
 ## サンプルコード
 - AES-GCM 実装例: `src/symmetric/aes_gcm.ts`

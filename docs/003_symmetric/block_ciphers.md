@@ -231,6 +231,7 @@ function SPN_Encrypt(M, K[0..r]): // 入力: 平文ブロック M、ラウンド
 ## 関連ドキュメント
 - 共通鍵暗号の概要と AEAD: `docs/003_symmetric/README.md`
 - ストリーム暗号: `docs/003_symmetric/stream_ciphers.md`
+- DES: `docs/003_symmetric/des.md`
 
 ## 参考資料
 - FIPS 197: Advanced Encryption Standard (AES)
