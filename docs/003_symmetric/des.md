@@ -145,6 +145,7 @@ function fK(L, R, K):                           // Feistel の 1 ラウンド更
 
 ## 関連ドキュメント
 - ブロック暗号の概論と Feistel/SPN の基礎: `docs/003_symmetric/block_ciphers.md`
+- トリプルDES（3DES/TDEA）: `docs/003_symmetric/triple_des.md`
 
 ## 参考資料
 - FIPS PUB 46-3: Data Encryption Standard (DES)
