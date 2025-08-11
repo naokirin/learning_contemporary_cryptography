@@ -88,6 +88,7 @@ function TDEA_Decrypt_EDE2(C, K1, K2):             // K3 は K1 に同一
 
 ## 関連ドキュメント
 - DES の詳細: `docs/003_symmetric/des.md`
+- AES の詳細: `docs/003_symmetric/aes.md`
 - ブロック暗号の概論: `docs/003_symmetric/block_ciphers.md`
 
 ## 参考資料
