@@ -28,4 +28,7 @@ pnpm-debug.log*
 .idea/
 
 # Logs
-*.log 
+*.log
+
+# Claude
+.claude/
