@@ -2,6 +2,7 @@
 export * from './symmetric/aes_gcm';
 export * from './asymmetric/rsa_oaep';
 export * from './asymmetric/ecdh';
+export * from './asymmetric/id_based_encryption';
 export * from './hash/sha256';
 export * from './mac/hmac_sha256';
 export * from './signature/ed25519';
