@@ -222,3 +222,8 @@ IDベース暗号の詳細については、[IDベース暗号の詳細説明](i
 - NIST SP 800-56A（Key Agreement）
 - Handbook of Applied Cryptography（Menezes, van Oorschot, Vanstone）
 - Guide to Elliptic Curve Cryptography（Hankerson, Menezes, Vanstone）
+
+## 関連ドキュメント
+
+### 双線型ペアリング暗号
+- [双線型ペアリングを利用する高機能暗号](./pairing_based_cryptography.md) - 検索可能暗号、属性ベース暗号、放送型暗号、プラインド署名、グループ署名、リング署名の概要と技術動向
