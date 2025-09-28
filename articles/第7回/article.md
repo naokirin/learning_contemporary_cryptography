@@ -84,7 +84,7 @@ NISTは以下の2つのカテゴリで標準化を進めています：
 
 **格子（Lattice）**は、数学的に以下のように定義されます：
 
-$L = \{ \sum_{i=1}^{n} a_i \mathbf{b}_i : a_i \in \mathbb{Z} \}$
+$L = \{ \sum_{i=1}^{n} x_i \mathbf{b}_i : x_i \in \mathbb{Z} \}$
 
 ここで、$\mathbf{b}_1, \mathbf{b}_2, \ldots, \mathbf{b}_n$は線形独立なベクトル（基底）です。
 
@@ -95,7 +95,7 @@ $L = \{ \sum_{i=1}^{n} a_i \mathbf{b}_i : a_i \in \mathbb{Z} \}$
 **2次元の格子の例**：
 - 平面上に2つのベクトル $\mathbf{b}_1 = (1, 0)$ と $\mathbf{b}_2 = (0, 1)$ を考えます
 - この2つのベクトルを「基底」として、整数倍の組み合わせで作られる点の集合が格子です
-- つまり、$(a_1, a_2)$ という点は、$a_1 \mathbf{b}_1 + a_2 \mathbf{b}_2 = (a_1, a_2)$ として表現されます
+- つまり、$(x_1, x_2)$ という点は、$x_1 \mathbf{b}_1 + x_2 \mathbf{b}_2 = (x_1, x_2)$ として表現されます
 - これは、座標軸上の整数座標の点（格子点）の集合になります
 
 **3次元の格子の例**：
@@ -243,6 +243,164 @@ CRYSTALS-Kyberは、Ring-LWEに基づく公開鍵暗号・鍵交換アルゴリ�
 **復号**：
 1. $m = v - s^T \cdot u \pmod{q}$を計算
 2. ノイズ除去により元のメッセージを復元
+
+#### NTRU暗号
+
+NTRU（N-th degree Truncated polynomial Ring Units）暗号は、1996年にHoffstein、Pipher、Silvermanによって提案された格子暗号です。多項式環上での計算に基づいており、実装が比較的簡単で効率的な格子暗号として知られています。
+
+##### NTRU暗号の数学的基盤
+
+NTRU暗号は、多項式環$R = \mathbb{Z}[X]/(X^N - 1)$上で動作します。ここで、$N$は固定された正の整数（通常、$N = 251$や$N = 503$など）です。
+
+**多項式のベクトル表現**：
+- 多項式$f(X) = f_0 + f_1X + f_2X^2 + \cdots + f_{N-1}X^{N-1}$は、係数ベクトル$\mathbf{f} = (f_0, f_1, \ldots, f_{N-1})^T$で表現されます
+- 多項式の掛け算は、巡回畳み込み（circular convolution）として計算されます
+- 多項式$f(X) \cdot g(X)$の積は、ベクトル$\mathbf{f}$と$\mathbf{g}$の巡回畳み込み$\mathbf{f} \circledast \mathbf{g}$で表現されます
+
+**巡回畳み込みの定義**：
+$(\mathbf{f} \circledast \mathbf{g})_i = \sum_{j=0}^{N-1} f_j \cdot g_{(i-j) \bmod N}$
+
+ここで、$i = 0, 1, \ldots, N-1$です。
+
+**巡回畳み込みの具体例（$N=4$の場合）**：
+- $\mathbf{f} = (f_0, f_1, f_2, f_3)^T = (1, 2, 0, 1)^T$
+- $\mathbf{g} = (g_0, g_1, g_2, g_3)^T = (0, 1, 1, 0)^T$
+
+巡回畳み込みの計算：
+- $(\mathbf{f} \circledast \mathbf{g})_0 = f_0 \cdot g_0 + f_1 \cdot g_3 + f_2 \cdot g_2 + f_3 \cdot g_1 = 1 \cdot 0 + 2 \cdot 0 + 0 \cdot 1 + 1 \cdot 1 = 1$
+- $(\mathbf{f} \circledast \mathbf{g})_1 = f_0 \cdot g_1 + f_1 \cdot g_0 + f_2 \cdot g_3 + f_3 \cdot g_2 = 1 \cdot 1 + 2 \cdot 0 + 0 \cdot 0 + 1 \cdot 1 = 2$
+- $(\mathbf{f} \circledast \mathbf{g})_2 = f_0 \cdot g_2 + f_1 \cdot g_1 + f_2 \cdot g_0 + f_3 \cdot g_3 = 1 \cdot 1 + 2 \cdot 1 + 0 \cdot 0 + 1 \cdot 0 = 3$
+- $(\mathbf{f} \circledast \mathbf{g})_3 = f_0 \cdot g_3 + f_1 \cdot g_2 + f_2 \cdot g_1 + f_3 \cdot g_0 = 1 \cdot 0 + 2 \cdot 1 + 0 \cdot 1 + 1 \cdot 0 = 2$
+
+結果：$\mathbf{f} \circledast \mathbf{g} = (1, 2, 3, 2)^T$
+
+##### NTRU暗号の鍵生成
+
+**パラメータ設定**：
+- $N$：多項式の次数（通常251、503、1024など）
+- $p$：小さな素数（通常3）
+- $q$：大きな素数（$p$と互いに素、通常$q = 2^k$）
+- $d_f, d_g$：秘密多項式の係数の重みパラメータ
+
+**鍵生成手順**：
+
+1. **秘密多項式の生成**：
+   - $\mathbf{f} \in \mathbb{Z}^N$：係数が$\{-1, 0, 1\}$で、$d_f$個の係数が1、$d_f$個の係数が-1、残りが0
+   - $\mathbf{g} \in \mathbb{Z}^N$：係数が$\{-1, 0, 1\}$で、$d_g$個の係数が1、$d_g$個の係数が-1、残りが0
+
+2. **逆元の計算**：
+   - $\mathbf{f}_p = \mathbf{f}^{-1} \pmod{p}$を計算（巡回畳み込みの逆元）
+   - $\mathbf{f}_q = \mathbf{f}^{-1} \pmod{q}$を計算（巡回畳み込みの逆元）
+
+3. **公開鍵の生成**：
+   - $\mathbf{h} = p \cdot (\mathbf{g} \circledast \mathbf{f}_q) \pmod{q}$
+
+4. **鍵の出力**：
+   - 公開鍵：$\mathbf{h}$
+   - 秘密鍵：$(\mathbf{f}, \mathbf{f}_p)$
+
+##### NTRU暗号の暗号化
+
+メッセージ$\mathbf{m} \in \mathbb{Z}^N$（係数が$\{-1, 0, 1\}$）の暗号化：
+
+1. **ランダム多項式の生成**：
+   - $\mathbf{r} \in \mathbb{Z}^N$：係数が$\{-1, 0, 1\}$で、$d_r$個の係数が1、$d_r$個の係数が-1、残りが0
+
+2. **暗号文の計算**：
+   - $\mathbf{c} = p \cdot (\mathbf{h} \circledast \mathbf{r}) + \mathbf{m} \pmod{q}$
+
+3. **出力**：暗号文$\mathbf{c}$
+
+##### NTRU暗号の復号
+
+暗号文$\mathbf{c}$の復号：
+
+1. **中間計算**：
+   - $\mathbf{a} = \mathbf{f} \circledast \mathbf{c} \pmod{q}$
+   - 係数を$[-q/2, q/2]$の範囲に調整
+
+2. **メッセージの復元**：
+   - $\mathbf{m} = \mathbf{f}_p \circledast \mathbf{a} \pmod{p}$
+   - 係数を$[-p/2, p/2]$の範囲に調整
+
+##### NTRU暗号の簡易例
+
+**パラメータ設定**：
+- $N = 4$（簡単のため）
+- $p = 3, q = 7$
+- $d_f = d_g = 1$
+
+**鍵生成の例**：
+
+1. **秘密多項式の生成**：
+   - $\mathbf{f} = (-1, 0, 0, 1)^T$（$X^3 - 1$に対応）
+   - $\mathbf{g} = (0, 1, 1, 0)^T$（$X^2 + X$に対応）
+
+2. **逆元の計算**：
+   - $\mathbf{f}_p = \mathbf{f}^{-1} \pmod{3}$を計算
+   - 巡回畳み込みで$\mathbf{f} \circledast \mathbf{f}_p \equiv (1, 0, 0, 0) \pmod{3}$
+   - $\mathbf{f}_p = (-1, 0, 0, 1)^T$（$\mathbf{f}$と同じ）
+
+3. **公開鍵の計算**：
+   - $\mathbf{h} = 3 \cdot (\mathbf{g} \circledast \mathbf{f}_q) \pmod{7}$
+   - $\mathbf{f}_q = \mathbf{f}^{-1} \pmod{7}$を計算
+   - $\mathbf{h} = 3 \cdot (\mathbf{g} \circledast \mathbf{f}_q) \pmod{7}$
+
+**暗号化の例**：
+
+1. **メッセージ**：$\mathbf{m} = (0, 0, 1, 0)^T$（$X^2$に対応）
+2. **ランダム多項式**：$\mathbf{r} = (0, 1, 0, 0)^T$（$X$に対応）
+3. **暗号文**：$\mathbf{c} = 3 \cdot (\mathbf{h} \circledast \mathbf{r}) + \mathbf{m} \pmod{7}$
+
+**復号の例**：
+
+1. **中間計算**：$\mathbf{a} = \mathbf{f} \circledast \mathbf{c} \pmod{7}$
+2. **メッセージ復元**：$\mathbf{m} = \mathbf{f}_p \circledast \mathbf{a} \pmod{3}$
+
+##### NTRU暗号の安全性
+
+**数学的基盤**：
+- NTRU暗号の安全性は、**最短ベクトル問題（SVP）**の困難性に基づいています
+- 特に、$N$次元の格子における最短ベクトルを見つける問題に帰着されます
+
+**攻撃手法**：
+1. **格子基底縮約攻撃**：LLLアルゴリズムやBKZアルゴリズムを使用
+2. **多項式時間攻撃**：特定のパラメータに対する効率的な攻撃
+3. **ハイブリッド攻撃**：格子攻撃と他の手法の組み合わせ
+
+**安全性の評価**：
+- **古典的安全性**：現在の最良の攻撃でも指数時間が必要
+- **量子安全性**：Shorのアルゴリズムでは解読できない
+- **パラメータ選択**：$N$、$p$、$q$の適切な選択が重要
+
+**推奨パラメータ**：
+- **NTRU-251**：$N = 251, p = 3, q = 128$（約80ビットの安全性）
+- **NTRU-503**：$N = 503, p = 3, q = 256$（約112ビットの安全性）
+- **NTRU-1024**：$N = 1024, p = 3, q = 512$（約128ビットの安全性）
+
+##### NTRU暗号の特徴
+
+**利点**：
+- **高速性**：多項式の掛け算が効率的
+- **小さな鍵サイズ**：RSAと比較して鍵サイズが小さい
+- **実装の簡単さ**：比較的簡単に実装可能
+- **量子耐性**：量子コンピュータでも解読困難
+
+**欠点**：
+- **パラメータ選択の重要性**：不適切なパラメータは安全性を損なう
+- **鍵サイズ**：CRYSTALS-Kyberと比較して鍵サイズが大きい
+- **標準化**：NISTのPQC標準化では選定されていない
+
+##### NTRU暗号の応用
+
+**実装例**：
+- **NTRUEncrypt**：暗号化・復号
+- **NTRUSign**：デジタル署名
+- **NTRU Prime**：改良版NTRU暗号
+
+**標準化**：
+- IEEE 1363.1：NTRU暗号の標準仕様
+- RFC 8463：NTRU暗号のTLS拡張
 
 ## 7.4 多変数多項式暗号（Multivariate Cryptography）
 
