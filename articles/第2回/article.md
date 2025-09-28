@@ -116,12 +116,12 @@ RC4の後継として登場したのが**ChaCha20**です。この暗号は、Go
 最も危険な攻撃手法の一つが鍵ストリームの再利用です。同じ鍵ストリーム $k_1, k_2, \ldots, k_n$ で異なる平文 $m_1$ と $m_2$ を暗号化すると、暗号文は $c_1 = m_1 \oplus k$ と $c_2 = m_2 \oplus k$ となります。この時、攻撃者が両方の暗号文を入手できれば、
 
 $$
-c_1 \oplus c_2 = (m_1 \oplus k) \oplus (m_2 \oplus k) = m_1 \oplus m_2
+C_1 \oplus C_2 = (P_1 \oplus K) \oplus (P_2 \oplus K) = P_1 \oplus P_2
 $$
 
 となり、平文の差分が直接露出してしまいます。
 
-この攻撃を防ぐためには、**一意なnonce（Number used once、一度だけ使われる数）やIV（Initialization Vector）** を使用して、同じ鍵でも異なる鍵ストリームを生成し、攻撃者に予測されない鍵ストリームとする必要があります。また、鍵の適切な管理と更新も重要です。
+この攻撃を防ぐためには、**一意なnonce（Number used once、一度だけ使われる数）やIV（Initialization Vector）** を使用して、同じ鍵でも異なる鍵ストリームを生成する必要があります。重要なのは、**同じ鍵とnonceのペアを二度と再利用しないこと**です。nonceは予測可能でも構いませんが、各暗号化に対して一意でなければなりません。また、鍵の適切な管理と更新も重要です。
 
 **統計的攻撃（Statistical Attack）**
 
@@ -353,8 +353,8 @@ Rainbow Tableは、Hellmanの手法を改良した攻撃手法で、Oechslinに�
 $$\text{セキュリティマージン} = \frac{\text{設計時の想定攻撃複雑度}}{\text{現在知られている最良の攻撃複雑度}}$$
 
 **AESのセキュリティマージン例**:
-- **AES-128**: 設計時想定 $2^{128}$ vs 最良攻撃 $2^{126}$ → マージン = 4倍
-- **AES-256**: 設計時想定 $2^{256}$ vs 最良攻撃 $2^{254}$ → マージン = 4倍
+- **AES-128**: 理論的な攻撃により計算量がわずかに削減（$2^{128}$から$2^{126}$へ）されるが、現実的な脅威ではない
+- **AES-256**: 理論的な攻撃により計算量がわずかに削減（$2^{256}$から$2^{254}$へ）されるが、現実的な脅威ではない
 
 #### セキュリティマージンの設計原則
 
@@ -485,8 +485,8 @@ Feistel構造の優れた点は、復号時も同じアルゴリズムを使用�
 
 ```math
 \begin{align}
-L_{i-1} &= R_i \\
-R_{i-1} &= L_i \oplus F(R_i, K_i)
+R_{i-1} &= L_i \\
+L_{i-1} &= R_i \oplus F(L_i, K_i)
 \end{align}
 ```
 
@@ -707,8 +707,8 @@ AESでは、SPN構造を以下のように実装しています：
 - **出力**: 128ビット平文ブロック $P_{128}$
 - **動作**:
   - 逆初期鍵加算: $\text{state} = C_{128} \oplus K_N$
-  - N-1ラウンド: InvShiftRows → InvSubBytes → AddRoundKey → InvMixColumns
-  - 最終ラウンド: InvShiftRows → InvSubBytes → AddRoundKey
+  - N-1ラウンド: AddRoundKey → InvMixColumns → InvShiftRows → InvSubBytes
+  - 最終ラウンド: AddRoundKey → InvShiftRows → InvSubBytes
   - 結果として $P_{128}$ を復元
 
 **攻撃手法と対策**
@@ -843,9 +843,9 @@ C_3 &= E_K(P_3 \oplus C_2)
 
 ```math
 \begin{aligned}
-C_1 &= P_1 \oplus E_K(\mathrm{CTR} + 1) \\
-C_2 &= P_2 \oplus E_K(\mathrm{CTR} + 2) \\
-C_3 &= P_3 \oplus E_K(\mathrm{CTR} + 3)
+C_1 &= P_1 \oplus E_K(\text{Nonce} \| 1) \\
+C_2 &= P_2 \oplus E_K(\text{Nonce} \| 2) \\
+C_3 &= P_3 \oplus E_K(\text{Nonce} \| 3)
 \end{aligned}
 ```
 
@@ -886,7 +886,7 @@ C_3 &= P_3 \oplus E_K(\mathrm{CTR} + 3)
 
 | モード | 安全性 | 並列化 | エラー伝播 | 用途           |
 | ------ | ------ | ------ | ---------- | -------------- |
-| ECB    | ❌ 低い | ⭕ 可能 | ❌ あり     | 使用禁止       |
+| ECB    | ❌ 低い | ⭕ 可能 | ⭕ なし     | 使用禁止       |
 | CBC    | ⭕ 高い | ❌ 不可 | ❌ あり     | ファイル暗号化 |
 | CTR    | ⭕ 高い | ⭕ 可能 | ⭕ なし     | 高速通信       |
 | GCM    | ⭕ 最高 | ⭕ 可能 | ⭕ なし     | TLS通信        |
