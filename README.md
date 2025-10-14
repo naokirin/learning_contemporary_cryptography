@@ -12,6 +12,7 @@
   - `docs/signature/`: 署名（RSA-PSS / Ed25519 など）
 - `src/`: TypeScript での最小サンプル実装
   - `src/symmetric/aes_gcm.ts`
+  - `src/symmetric/aes-scratch.ts` - AES-128のスクラッチ実装（学習用）
   - `src/asymmetric/rsa_oaep.ts`
   - `src/hash/sha256.ts`
   - `src/mac/hmac_sha256.ts`

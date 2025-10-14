@@ -36,6 +36,7 @@ Each category has its own subdirectory with:
 - Common pattern: accept `string | Uint8Array` inputs
 - Use Node.js built-in crypto APIs rather than third-party libraries
 - Main entry point: `src/index.ts` with simple console output for testing
+- Educational implementations: Some files like `src/symmetric/aes-scratch.ts` provide from-scratch implementations without external crypto libraries for learning purposes (not for production use)
 
 ## Documentation Template
 Use `docs/_template.md` as the structure for new cryptographic method documentation:
