@@ -6,7 +6,7 @@
 
 これらの要求に応えるのが **高機能暗号（Advanced Cryptography / Functional Cryptography）** です。高機能暗号は、暗号化されたデータに対して検索や計算、アクセス制御などの高度な操作を可能にし、プライバシーを保ちながら実用的なシステムを構築できます。
 
-連載記事の全体は、 [第0回　暗号技術の基礎を学ぶ連載記事一覧](https://qiita.com/naoki_hayashida/items/deafc06c5df43715e334) を参照してください。
+連載記事の全体は、 「[第0回　暗号技術の基礎を学ぶ連載記事一覧](https://qiita.com/naoki_hayashida/items/deafc06c5df43715e334) 」を参照してください。
 
 # 6.1 高機能暗号の全体像
 
@@ -107,6 +107,31 @@ ICU看護師（[役割：看護師], [担当区域：ICU]）→ 復号可能
 一般看護師（[役割：看護師], [担当区域：一般]）→ 復号不可
 ```
 
+### 属性ベース暗号のセキュリティ特性
+
+属性ベース暗号システムでは、以下のセキュリティ特性が実現されます。
+
+```mermaid
+mindmap
+top((属性ベース暗号の<br/>セキュリティ特性))
+	機密性
+		暗号文の保護
+		属性情報の秘匿
+		アクセスポリシーの保護
+	柔軟性
+		複雑なアクセス条件
+		動的な権限管理
+		細粒度の制御
+	効率性
+		中央集権的管理の不要
+		スケーラブルな実装
+		計算効率の最適化
+	実用性
+		既存システムとの統合
+		ユーザビリティの向上
+		運用コストの削減
+```
+
 # 6.3 検索可能暗号：暗号化データの検索
 
 ## クラウドストレージの課題
@@ -159,6 +184,31 @@ ASEは、公開鍵で暗号化し、秘密鍵で検索トークンを生成す�
 2. 医師が必要な症状や検査結果で検索
 3. 該当する患者の暗号化記録のみを取得
 4. 医師が適切な権限で復号して診療に活用
+
+### 検索可能暗号のセキュリティ特性
+
+検索可能暗号システムでは、以下のセキュリティ特性が実現されます。
+
+```mermaid
+mindmap
+root((検索可能暗号の<br/>セキュリティ特性))
+	機密性
+		暗号文の保護
+		検索クエリの秘匿
+		インデックス情報の保護
+	プライバシー保護
+		検索パターンの隠蔽
+		アクセスパターンの保護
+		許容可能漏洩の制御
+	効率性
+		高速な検索処理
+		インデックス構築の最適化
+		ストレージ効率の向上
+	実用性
+		クラウド環境での活用
+		既存システムとの統合
+		ユーザビリティの向上
+```
 
 
 # 6.4 匿名署名：プライバシーを保つ署名技術
@@ -217,6 +267,87 @@ ASEは、公開鍵で暗号化し、秘密鍵で検索トークンを生成す�
 2. 有権者リストをリングとして使用
 3. 投票内容は有権者であることを証明するが、具体的な有権者は特定不可能
 4. 完全な匿名性を保ちながら投票の正当性を確保
+
+リング署名による匿名投票システムでは、以下のセキュリティ特性が実現されます。
+
+```mermaid
+mindmap
+root((リング署名による<br/>匿名投票の<br/>セキュリティ特性))
+	匿名性
+		投票者の身元保護
+		投票内容の秘匿
+		投票パターンの隠蔽
+	正当性
+		有権者のみが投票可能
+		重複投票の防止
+		投票内容の改ざん防止
+	検証可能性
+		署名の有効性確認
+		投票結果の透明性
+		監査可能性の確保
+	実用性
+		効率的な処理
+		スケーラビリティ
+		ユーザビリティ
+```
+
+### リング署名の仕組み
+
+リング署名では、署名者の集合（リング）のいずれかが署名を生成したことを証明しますが、具体的な署名者は特定できません。以下の図で、この仕組みを説明します。
+
+```mermaid
+graph TD
+    A[署名者A<br/>秘密鍵SK_A] --> E[リング署名生成]
+    B[署名者B<br/>秘密鍵SK_B] --> E
+    C[署名者C<br/>秘密鍵SK_C] --> E
+    D[署名者D<br/>秘密鍵SK_D] --> E
+    
+    E --> F[署名σ]
+    F --> G[検証者]
+    
+    G --> H{署名検証}
+    H --> I[署名者はリングメンバーの<br/>いずれかであることを確認]
+    H --> J[具体的な署名者は<br/>特定不可能]
+    
+    style A fill:#e1f5fe
+    style B fill:#e1f5fe
+    style C fill:#e1f5fe
+    style D fill:#e1f5fe
+    style E fill:#fff3e0
+    style F fill:#f3e5f5
+    style G fill:#e8f5e8
+    style I fill:#e8f5e8
+    style J fill:#ffebee
+```
+
+### 匿名投票システムでのリング署名
+
+電子投票システムでは、有権者リストをリングとして使用し、投票の匿名性を保ちながら正当性を確保します。
+
+```mermaid
+sequenceDiagram
+    participant V as 有権者
+    participant S as 署名システム
+    participant VS as 投票システム
+    participant C as 集計システム
+    
+    Note over V,C: 投票準備段階
+    V->>S: 有権者認証
+    S->>V: 投票権確認
+    
+    Note over V,C: 投票実行段階
+    V->>S: 候補者選択 + 有権者リスト
+    S->>S: リング署名生成<br/>(実際の署名者は不明)
+    S->>VS: 匿名投票データ
+    
+    Note over V,C: 検証・集計段階
+    VS->>VS: 署名検証<br/>(有権者リストのメンバーであることを確認)
+    VS->>C: 有効な投票データ
+    C->>C: 投票結果集計
+    
+    Note over V,C: 結果
+    Note right of C: 投票の正当性は保証されるが<br/>具体的な投票者は特定不可能
+```
 
 ### 匿名での情報開示
 
@@ -346,15 +477,6 @@ Moneroなどの暗号資産では、リング署名を活用してプライバ�
 
 暗号技術は、古典暗号から現代暗号、認証・署名技術、そして高機能暗号へと進化してきました。この進化により、ディジタル社会におけるセキュリティとプライバシーの要求に応える技術が提供されています。
 
-次回の第7回では、**耐量子計算機暗号（Post-Quantum Cryptography）** について学びます。量子コンピュータの登場により、現在広く使用されているRSA暗号や楕円曲線暗号が解読される可能性があります。次回は、量子コンピュータに強い暗号方式について解説し、NISTの標準化プロジェクトや実用的な格子暗号などについて取り上げます。
+次回の「[第7回　耐量子暗号とこれからの暗号技術](https://qiita.com/naoki_hayashida/items/10934505989252aa1345)」では、**耐量子計算機暗号（Post-Quantum Cryptography）** について学びます。量子コンピュータの登場により、現在広く使用されているRSA暗号や楕円曲線暗号が解読される可能性があります。次回は、量子コンピュータに強い暗号方式について解説し、NISTの標準化プロジェクトや実用的な格子暗号などについて取り上げます。
 
 高機能暗号と耐量子暗号の組み合わせにより、将来のディジタル社会におけるセキュリティ基盤が構築されていきます。
-
----
-
-**参考文献**
-- Sahai, A., & Waters, B. (2005). Fuzzy identity-based encryption. In Annual international conference on the theory and applications of cryptographic techniques (pp. 457-473).
-- Gentry, C. (2009). Fully homomorphic encryption using ideal lattices. In Proceedings of the forty-first annual ACM symposium on Theory of computing (pp. 169-178).
-- Boneh, D., Goh, E. J., & Nissim, K. (2005). Evaluating 2-DNF formulas on ciphertexts. In Theory of cryptography conference (pp. 325-341).
-- Chaum, D., & Van Heyst, E. (1991). Group signatures. In Workshop on the Theory and Application of of Cryptographic Techniques (pp. 257-265).
-- Rivest, R. L., Shamir, A., & Tauman, Y. (2001). How to leak a secret. In International conference on the theory and application of cryptology and information security (pp. 552-565).

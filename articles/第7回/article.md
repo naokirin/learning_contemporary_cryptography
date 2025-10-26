@@ -828,48 +828,26 @@ NISTのPQC標準化プロジェクトの完了により、業界標準として�
 - セキュリティプロトコルの改訂
 - PQCをサポートする利用ツールやライブラリへの移行、アップデート
 
-## シリーズ全体のまとめ
+## 全体のまとめ
 
-本シリーズでは、暗号技術の基礎から最新の高機能暗号、そして耐量子暗号まで、包括的に解説しました。
+本連載では、暗号技術の基礎から最新の高機能暗号、そして耐量子暗号まで、包括的に解説しました。
 
 #### 学んだ内容
-1. **暗号技術の基礎** ：安全性モデル、計算量的困難性
-2. **対称鍵暗号** ：AES、暗号モード、安全性
-3. **ハッシュ関数とMAC** ：完全性、認証の仕組み
-4. **公開鍵暗号** ：RSA、楕円曲線暗号、安全性
-5. **高機能暗号** ：IDベース暗号、属性ベース暗号、匿名署名
-6. **耐量子暗号** ：量子脅威への対応
+1. **暗号技術の基礎** ：各暗号技術の概要、安全性モデル、計算量的困難性
+2. **共通鍵暗号** ：ブロック暗号、ストリーム暗号、DES、AES、暗号モード
+3. **ハッシュ関数とMAC** ：ハッシュ関数、完全性、認証の仕組み
+4. **公開鍵暗号** ：Diffie-Hellman鍵共有、RSA暗号、楕円曲線暗号
+5. **高機能暗号** ：IDベース暗号、属性ベース暗号、検索可能暗号、匿名署名
+6. **耐量子暗号** ：量子計算機による脅威への対応
 
 #### 実世界との関連
 各記事で取り上げた暗号技術は、TLS、VPN、暗号資産、電子署名など、現代のディジタル社会を支える重要な技術として実際に使用されています。
 
 ## 今後の学習に向けて
 
-暗号技術は急速に発展している分野です。本シリーズで学んだ基礎知識を基に、以下の分野についてさらに学習を深めることをお勧めします。
+暗号技術は急速に発展している分野です。本連載で学んだ基礎知識以外にも、以下のような分野の暗号に関連する技術が発展しています。
 
 - **量子暗号** ：量子力学を利用した暗号技術
 - **マルチパーティ計算** ：プライバシー保護型の分散計算
 - **ゼロ知識証明** ：情報を開示せずに証明を行う技術
 - **ブロックチェーン暗号** ：分散システムにおける暗号技術
-
-暗号技術の理解は、セキュアなシステムの設計・実装に不可欠です。本シリーズが、読者の皆様の暗号技術への理解を深め、より安全なディジタル社会の構築に貢献することを願っています。
-
----
-
-# 参考文献
-
-1. Shor, P. W. (1994). "Algorithms for quantum computation: discrete logarithms and factoring". Proceedings 35th Annual Symposium on Foundations of Computer Science.
-2. Grover, L. K. (1996). "A fast quantum mechanical algorithm for database search". Proceedings of the Twenty-Eighth Annual ACM Symposium on Theory of Computing.
-3. NIST. (2022). "Post-Quantum Cryptography Standardization". NIST Internal Report 8413.
-4. Regev, O. (2009). "On lattices, learning with errors, random linear codes, and cryptography". Journal of the ACM.
-5. McEliece, R. J. (1978). "A public-key cryptosystem based on algebraic coding theory". DSN Progress Report.
-6. Merkle, R. C. (1979). "Secrecy, authentication, and public key systems". PhD thesis, Stanford University.
-
-# 関連記事
-
-- [第1回：暗号技術の基礎と安全性の考え方](第1回/article.md)
-- [第2回：共通鍵暗号と暗号モード](第2回/article.md)
-- [第3回：ハッシュ関数とメッセージ認証コード（MAC）](第3回/article.md)
-- [第4回：RSA暗号・分散署名・準同型暗号](第4回/article.md)
-- [第5回：離散対数問題に基づく暗号](第5回/article.md)
-- [第6回：高機能暗号とその応用](第6回/article.md)
