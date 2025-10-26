@@ -422,16 +422,22 @@ $$\text{セキュリティマージン} = \frac{\text{設計時の想定攻撃�
 **DESの構造**
 DESは**Feistel構造**と呼ばれる設計パターンを採用しています。
 
-```
-平文ブロック（64ビット）
-↓
-初期置換
-↓
-16ラウンドのFeistel構造
-↓
-最終置換
-↓
-暗号文ブロック（64ビット）
+```mermaid
+flowchart TD
+    A[平文ブロック<br/>64ビット] --> B[初期置換<br/>IP]
+    B --> C[16ラウンドのFeistel構造]
+    C --> D[最終置換<br/>IP⁻¹]
+    D --> E[暗号文ブロック<br/>64ビット]
+    
+    C --> F[ラウンド1]
+    F --> G[ラウンド2]
+    G --> H[...]
+    H --> I[ラウンド16]
+    I --> C
+    
+    style A fill:#e1f5fe
+    style E fill:#f3e5f5
+    style C fill:#fff3e0
 ```
 
 各ラウンドでは、ブロックを左右32ビットずつに分割し、右半分に複雑な変換を施してから左半分とXORを取る操作を繰り返します。
@@ -571,16 +577,49 @@ DESの後継として、2001年にNISTによって標準化されたのが**AES*
 **AESの構造**
 AESは **SPN構造（Substitution-Permutation Network）** を採用しています。
 
-```
-平文ブロック（128ビット）
-↓
-初期鍵加算
-↓
-N-1ラウンド（SubBytes → ShiftRows → MixColumns → AddRoundKey）
-↓
-最終ラウンド（SubBytes → ShiftRows → AddRoundKey）
-↓
-暗号文ブロック（128ビット）
+```mermaid
+flowchart TB
+    A[平文ブロック<br/>128ビット] --> B[初期鍵加算<br/>state = P ⊕ K₀]
+    
+    B --> H{最終ラウンド？}
+    H -->|No| SA
+    H -->|Yes| SB
+
+    subgraph SA[N-1ラウンド]
+      D[SubBytes]
+      E
+      F
+      G
+    end
+
+    subgraph SB[最終ラウンド]
+      J[SubBytes]
+      K
+      L
+    end
+    
+    D --> E[ShiftRows]
+    E --> F[MixColumns]
+    F --> G[AddRoundKey]
+    G --> H
+    
+    J --> K[ShiftRows]
+    K --> L[AddRoundKey]
+    
+    L --> M[暗号文ブロック<br/>128ビット]
+    
+    style A fill:#e1f5fe
+    style M fill:#f3e5f5
+    style D fill:#fff3e0
+    style E fill:#fff3e0
+    style F fill:#fff3e0
+    style G fill:#fff3e0
+    style J fill:#fff3e0
+    style K fill:#fff3e0
+    style L fill:#fff3e0
+
+    style SA fill:#ffeeee
+    style SB fill: #eeffee
 ```
 
 各ラウンドの処理：
@@ -801,12 +840,28 @@ AESなどのブロック暗号は、同じ平文ブロックに対して常に�
 
 **最もシンプルなモード**ですが、**実用では使用すべきではありません**。
 
-```math
-\begin{aligned}
-C_1 &= E_K(P_1) \\
-C_2 &= E_K(P_2) \\
-C_3 &= E_K(P_3)
-\end{aligned}
+```mermaid
+flowchart LR
+    P1[平文ブロック1<br/>P₁] --> E1[暗号化<br/>E_K]
+    E1 --> C1[暗号文ブロック1<br/>C₁]
+    
+    P2[平文ブロック2<br/>P₂] --> E2[暗号化<br/>E_K]
+    E2 --> C2[暗号文ブロック2<br/>C₂]
+    
+    P3[平文ブロック3<br/>P₃] --> E3[暗号化<br/>E_K]
+    E3 --> C3[暗号文ブロック3<br/>C₃]
+    
+    K[共通鍵K] --> E1
+    K --> E2
+    K --> E3
+    
+    style P1 fill:#e1f5fe
+    style P2 fill:#e1f5fe
+    style P3 fill:#e1f5fe
+    style C1 fill:#f3e5f5
+    style C2 fill:#f3e5f5
+    style C3 fill:#f3e5f5
+    style K fill:#fff3e0
 ```
 
 **問題点**
@@ -818,13 +873,35 @@ C_3 &= E_K(P_3)
 
 **前のブロックの暗号文を次のブロックの暗号化に使用**するモードです。
 
-```math
-\begin{aligned}
-C_0 &= \text{IV} \quad (\text{初期化ベクトル}) \\
-C_1 &= E_K(P_1 \oplus C_0) \\
-C_2 &= E_K(P_2 \oplus C_1) \\
-C_3 &= E_K(P_3 \oplus C_2)
-\end{aligned}
+```mermaid
+flowchart TD
+    IV[初期化ベクトル<br/>IV] --> XOR1[⊕]
+    P1[平文ブロック1<br/>P₁] --> XOR1
+    XOR1 --> E1[暗号化<br/>E_K]
+    E1 --> C1[暗号文ブロック1<br/>C₁]
+    
+    C1 --> XOR2[⊕]
+    P2[平文ブロック2<br/>P₂] --> XOR2
+    XOR2 --> E2[暗号化<br/>E_K]
+    E2 --> C2[暗号文ブロック2<br/>C₂]
+    
+    C2 --> XOR3[⊕]
+    P3[平文ブロック3<br/>P₃] --> XOR3
+    XOR3 --> E3[暗号化<br/>E_K]
+    E3 --> C3[暗号文ブロック3<br/>C₃]
+    
+    K[共通鍵K] --> E1
+    K --> E2
+    K --> E3
+    
+    style P1 fill:#e1f5fe
+    style P2 fill:#e1f5fe
+    style P3 fill:#e1f5fe
+    style C1 fill:#f3e5f5
+    style C2 fill:#f3e5f5
+    style C3 fill:#f3e5f5
+    style IV fill:#fff3e0
+    style K fill:#fff3e0
 ```
 
 **特徴**
@@ -844,12 +921,40 @@ C_3 &= E_K(P_3 \oplus C_2)
 
 **カウンタ値を暗号化してストリーム暗号として使用**するモードです。
 
-```math
-\begin{aligned}
-C_1 &= P_1 \oplus E_K(\text{Nonce} \| 1) \\
-C_2 &= P_2 \oplus E_K(\text{Nonce} \| 2) \\
-C_3 &= P_3 \oplus E_K(\text{Nonce} \| 3)
-\end{aligned}
+```mermaid
+flowchart TD
+    Nonce[Nonce] --> C1["カウンタ1<br/>Nonce + 1"]
+    Nonce --> C2["カウンタ2<br/>Nonce + 2"]
+    Nonce --> C3["カウンタ3<br/>Nonce + 3"]
+    
+    C1 --> E1[暗号化<br/>E_K]
+    C2 --> E2[暗号化<br/>E_K]
+    C3 --> E3[暗号化<br/>E_K]
+    
+    E1 --> XOR1[⊕]
+    E2 --> XOR2[⊕]
+    E3 --> XOR3[⊕]
+    
+    P1[平文ブロック1<br/>P₁] --> XOR1
+    P2[平文ブロック2<br/>P₂] --> XOR2
+    P3[平文ブロック3<br/>P₃] --> XOR3
+    
+    XOR1 --> C1_out[暗号文ブロック1<br/>C₁]
+    XOR2 --> C2_out[暗号文ブロック2<br/>C₂]
+    XOR3 --> C3_out[暗号文ブロック3<br/>C₃]
+    
+    K[共通鍵K] --> E1
+    K --> E2
+    K --> E3
+    
+    style P1 fill:#e1f5fe
+    style P2 fill:#e1f5fe
+    style P3 fill:#e1f5fe
+    style C1_out fill:#f3e5f5
+    style C2_out fill:#f3e5f5
+    style C3_out fill:#f3e5f5
+    style Nonce fill:#fff3e0
+    style K fill:#fff3e0
 ```
 
 **特徴**
@@ -870,9 +975,27 @@ C_3 &= P_3 \oplus E_K(\text{Nonce} \| 3)
 
 **暗号化と認証を同時に提供** する **AEAD（Authenticated Encryption with Associated Data）** モードです。
 
-```
-暗号化: CTRモードと同様
-認証タグ: Galois体での演算により生成
+```mermaid
+flowchart TD
+    P[平文] --> CTR[CTRモード暗号化]
+    CTR --> C[暗号文]
+    
+    P --> GHASH[GHASH認証<br/>Galois体演算]
+    AAD[関連データ<br/>AAD] --> GHASH
+    C --> GHASH
+    GHASH --> TAG[認証タグ]
+    
+    K[共通鍵K] --> CTR
+    K --> GHASH
+    
+    C --> OUT[出力: 暗号文 + 認証タグ]
+    TAG --> OUT
+    
+    style P fill:#e1f5fe
+    style C fill:#f3e5f5
+    style TAG fill:#e8f5e8
+    style AAD fill:#fff3e0
+    style K fill:#fff3e0
 ```
 
 **特徴**
@@ -931,8 +1054,20 @@ C_3 &= P_3 \oplus E_K(\text{Nonce} \| 3)
 
 ### 鍵管理のライフサイクル
 
-```
-鍵生成 → 配布 → 使用 → 更新 → 破棄
+```mermaid
+flowchart LR
+    A[鍵生成<br/>CSPRNG使用] --> B[鍵配布<br/>安全な経路]
+    B --> C[鍵使用<br/>最小権限原則]
+    C --> D[鍵更新<br/>定期・緊急更新]
+    D --> E[鍵破棄<br/>完全削除]
+    
+    D --> C
+    
+    style A fill:#e1f5fe
+    style B fill:#fff3e0
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#ffebee
 ```
 
 #### 1. 鍵生成
@@ -994,14 +1129,20 @@ C_3 &= P_3 \oplus E_K(\text{Nonce} \| 3)
 
 ### TLS 1.3での暗号化フロー
 
-```
-1. ハンドシェイク
-   クライアント ←→ サーバ
-   （公開鍵暗号で共通鍵を安全に交換）
-
-2. レコード暗号化
-   クライアント --[AES-GCM]→ サーバ
-   （共通鍵暗号で高速なデータ暗号化）
+```mermaid
+sequenceDiagram
+    participant C as クライアント
+    participant S as サーバ
+    
+    Note over C,S: 1. ハンドシェイク
+    C->>S: ClientHello
+    S->>C: ServerHello + 証明書
+    C->>S: 鍵交換
+    Note over C,S: 公開鍵暗号で共通鍵を安全に交換
+    
+    Note over C,S: 2. レコード暗号化
+    C->>S: データ --[AES-GCM暗号化]-->
+    Note over C,S: 共通鍵暗号で高速なデータ暗号化
 ```
 
 **なぜAES-GCMが選ばれるのか**
@@ -1025,11 +1166,21 @@ VPNでは、インターネット上に安全なトンネルを構築するた�
 - **IPsec**: AES-CTR + HMAC-SHA256
 - **WireGuard**: ChaCha20-Poly1305（軽量で高速）
 
-```
-VPN通信の例:
-企業ネットワーク ←[暗号化トンネル]→ リモートワーカー
-                 ↑
-              AES-256-GCM等
+```mermaid
+flowchart LR
+    EN[企業ネットワーク] --> VPN
+    VPN --> RW[リモートワーカー]
+    
+    subgraph VPN[VPN暗号化トンネル]
+        direction TB
+        A[データ] --> B[AES-256-GCM暗号化]
+        B --> C[暗号化データ]
+        C --> D[ネットワーク送信]
+    end
+    
+    style EN fill:#e1f5fe
+    style RW fill:#e1f5fe
+    style VPN fill:#f3e5f5
 ```
 
 ### ディスク暗号化
@@ -1053,11 +1204,28 @@ VPN通信の例:
 
 **CCMP（Counter Mode with Cipher Block Chaining Message Authentication Code Protocol）** は、実質的にAES-CCMモードの実装です。
 
-```
-無線フレームの暗号化:
-平文フレーム → [AES-CCM] → 暗号化フレーム + MIC
-                 ↑
-              WPA2の鍵管理
+```mermaid
+flowchart TD
+    PF[平文フレーム] --> CCMP
+    CCMP --> CF[暗号化フレーム]
+    CCMP --> MIC[MIC<br/>メッセージ認証コード]
+    
+    WPA2_KEY[WPA2の鍵管理] --> CCMP
+    
+    CF --> OUTPUT[出力: 暗号化フレーム + MIC]
+    MIC --> OUTPUT
+    
+    subgraph CCMP[CCMP]
+        direction TB
+        CTR[CTR暗号化<br/>データ部分] --> ENCRYPTED[暗号化データ]
+        CBC_MAC[CBC-MAC<br/>認証コード生成] --> AUTH_TAG[認証タグ]
+    end
+    
+    style PF fill:#e1f5fe
+    style CF fill:#f3e5f5
+    style MIC fill:#e8f5e8
+    style WPA2_KEY fill:#fff3e0
+    style OUTPUT fill:#f3e5f5
 ```
 
 **CCMPの特徴**
@@ -1093,15 +1261,13 @@ VPN通信の例:
 - **AES-256**: 保存時暗号化の標準
 - **エンベロープ暗号化**: 階層的な鍵管理
 
-# 2.7 まとめと次回へのつなぎ：共通鍵暗号の世界から次のステップへ
-
-## 第2回を振り返って
+# 2.7 まとめ
 
 私たちは今回、共通鍵暗号の世界を一つの大きなストーリーとして旅してきました。シンプルなアイデアから始まって、ストリーム暗号とブロック暗号の違い、DESからAESへの進化、暗号モードの重要性、そして実世界での応用まで——すべてが一つの流れの中で理解できるよう構成しました。
 
-この旅路を通じて、なぜ現代のデジタル社会が安全に機能しているのか、その背景にある技術的な仕組みが見えてきたはずです。
+なぜ現代のデジタル社会が安全に機能しているのか、その背景にある技術的な仕組みが見えてきたはずです。
 
-### 第2回で学んだこと：知識の地図
+### 第2回で学んだこと
 
 本記事では、**共通鍵暗号**の基礎から応用まで幅広く学びました。重要なポイントを整理します。
 
