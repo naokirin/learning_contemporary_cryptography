@@ -11,6 +11,7 @@
   - `docs/mac/`: メッセージ認証コード（HMAC など）
   - `docs/signature/`: 署名（RSA-PSS / Ed25519 など）
   - `docs/oss-libraries.md`: 高機能暗号のOSSライブラリ一覧
+  - `docs/pqc-adoption.md`: 耐量子暗号の実世界での導入状況（企業・政府・サービス）
 - `src/`: TypeScript での最小サンプル実装
   - `src/symmetric/aes_gcm.ts`
   - `src/symmetric/aes-scratch.ts` - AES-128のスクラッチ実装（学習用）

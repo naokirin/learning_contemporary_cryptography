@@ -18,6 +18,7 @@ Each category has its own subdirectory with:
 
 Special documentation:
 - `docs/oss-libraries.md` - Comprehensive list of OSS libraries for advanced cryptography (pairing, ABE, searchable encryption, group/ring signatures)
+- `docs/pqc-adoption.md` - Real-world adoption of Post-Quantum Cryptography (PQC) by enterprises, governments, and services (as of October 2025)
 
 ## Development Commands
 - **Development (watch mode)**: `npm run dev` - runs `tsx watch src/index.ts`
