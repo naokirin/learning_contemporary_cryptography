@@ -445,11 +445,53 @@ Moneroなどの暗号資産では、リング署名を活用してプライバ�
 
 量子計算機の登場により、現在の高機能暗号も解読される可能性があります。そのため、量子耐性暗号との組み合わせが重要です。格子ベースの高機能暗号、多変数多項式ベースの高機能暗号、ハッシュベースの高機能暗号などの研究が進められています。
 
-## 実用化への道筋
+# 6.7 実装されているライブラリについて
 
-短期的には、特定用途での実用化やプロトタイプシステムの構築が進むでしょう。中期的には、標準化の完了と商用製品への組み込みが期待されます。長期的には、一般的な暗号技術としての普及と新しい応用分野の開拓、社会インフラへの組み込みが実現されるでしょう。
+ここまでに紹介した暗号技術が実装されているOSSのライブラリの一部を参考として紹介します。ただし、紹介したライブラリが一般用途において安全である保証はなく、実際の本番環境利用については、用途に応じた最新の安全性評価や多角的な検証を踏まえて利用するようにしてください。
 
-# 6.7 まとめ
+## 1. 双線型ペアリング (Bilinear Pairing)
+
+| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
+|:------------|:-----|:----------------|:----------------|:---------|
+| **pairing** | Rust | [zkcrypto/pairing](https://github.com/zkcrypto/pairing) | ペアリング暗号の基本的なトレイトを定義するRustのコアライブラリ。多くのエコシステムで利用されている。 | アクティブ |
+| **Kyber** | Go | [dedis/kyber](https://github.com/dedis/kyber) | スイスの大学EPFL発の暗号ライブラリ。`pairing/bn256`でBN256曲線上のペアリングをサポート。 | アクティブ |
+| **py_ecc** | Python | [ethereum/py_ecc](https://github.com/ethereum/py_ecc) | Ethereumのコンセンサスレイヤーで使用。BLS12-381を含む複数のペアリング曲線に対応。実戦でテスト済み。 | アクティブ |
+| **MIRACL Core** | C/C++, JS(WASM) | [miracl/core](https://github.com/miracl/core) | 高速な暗号ライブラリ。多くのペアリング曲線に対応し、WebAssemblyにコンパイルしてJavaScriptからも利用可能。 | アクティブ |
+| **AMCL** | C, Go, Rust, etc. | [miracl/amcl](https://github.com/miracl/core) | Apache Milagro Core Cryptographic Library | アクティブ |
+
+## 2. 属性ベース暗号 (ABE: Attribute-Based Encryption)
+
+| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
+|:------------|:-----|:----------------|:----------------|:---------|
+| **circl** | Go | [cloudflare/circl](https://github.com/cloudflare/circl) | Cloudflareによる高性能暗号ライブラリ。`abe/cpabe` パッケージでCP-ABEを実装。 | アクティブ |
+| **gofe** | Go | [fentec-project/gofe](https://github.com/fentec-project/gofe) | FAME (CP-ABE) と GPSW (KP-ABE) を実装した関数型暗号ライブラリ。GoでABEを試す際の有力候補。 | メンテナンス中 |
+
+## 3. 検索可能暗号 (Searchable Encryption)
+
+| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
+|:------------|:-----|:----------------|:----------------|:---------|
+| **Acra** | Go, Python, Ruby | [cossacklabs/acra](https://github.com/cossacklabs/acra) | データベースセキュリティスイート。SQL/NoSQL対応の透過的な暗号化と検索可能暗号化機能を提供。実用性が高い。 | アクティブ |
+
+## 4. グループ署名 (Group Signature)
+
+| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
+|:------------|:-----|:----------------|:----------------|:---------|
+| **paring-crypto** | Rust, JS(WASM) | [mattrglobal/paring-crypto](https://github.com/mattrglobal/pairing_crypto) | BBS+署名のRust実装。WASMを介してJS/TSからも利用可能。BLS12-381曲線をサポート。 | アクティブ |
+| **bbs-signature-go** | Go | [trustbloc/bbs-signature-go](https://github.com/trustbloc/bbs-signature-go) | Hyperledger Ariesの一部として開発されたBBS+署名のGo実装。 | アクティブ |
+| **@docknetwork/crypto-wasm** | TypeScript/WASM | [docknetwork/crypto-wasm](https://github.com/docknetwork/crypto-wasm) | Dock's Rust暗号ライブラリのWASMラッパー。BBS+署名、BLS12-381曲線をサポート。 | アクティブ |
+| **@herculas/bbs-signature** | TypeScript/WASM | [JSR Package](https://jsr.io/@herculas/bbs-signature) | RustからWASMにコンパイルされたBBS+実装。BBS Signature Scheme v8準拠。 | アクティブ |
+
+## 5. リング署名 (Ring Signature)
+
+| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
+|:------------|:-----|:----------------|:----------------|:---------|
+| **monero** | C++ | [monero-project/monero](https://github.com/monero-project/monero) | Monero公式実装。CLSAG, MLSAGを含む最も信頼性の高いリング署名実装。 | 非常に高 |
+| **nazgul** | Rust | [edwinhere/nazgul](https://github.com/edwinhere/nazgul) | SAG, bLSAG, MLSAG, CLSAG を実装。Zero to Monero 2.0のChapter 3に基づく。Ristretto曲線使用。 | アクティブ |
+| **MLSAG** | Rust | [crate-crypto/MLSAG](https://github.com/crate-crypto/MLSAG) | MLSAG実装（CLSAGの基礎）。105 stars。監査未実施のため利用は自己責任。 | 中 |
+| **fujisaki-ringsig** | Rust | [rozbb/fujisaki-ringsig](https://github.com/rozbb/fujisaki-ringsig) | Fujisaki-Suzuki Traceable Ring Signature実装。curve25519-daleクライブラリ使用。 | アクティブ |
+| **ring-signatures-rs** | Rust | [arnaucube/ring-signatures-rs](https://github.com/arnaucube/ring-signatures-rs) | bLSAG（Back's Linkable SAG）のRust実装。arkworks使用。学習目的。 | アクティブ |
+
+# 6.8 まとめ
 
 ## 高機能暗号の全体像
 
