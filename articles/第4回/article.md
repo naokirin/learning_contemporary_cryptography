@@ -166,7 +166,7 @@ $$a^{p-1} \equiv 1 \pmod{p}$$
 
 暗号化は単純に $c = m^e \bmod n$ で行われ、復号は $m = c^d \bmod n$ で行われます。この仕組みが正しく動作する理由は、オイラーの定理にあります。
 
-復号の正しさを確認してみましょう：
+復号の正しさを確認してみましょう。
 
 ```math
 \begin{align}
@@ -438,7 +438,8 @@ $$\lambda(n) = \text{lcm}(\lambda(p_1^{e_1}), \lambda(p_2^{e_2}), \ldots, \lambd
 **定理**：Paillier暗号方式は正当性を満たします。
 
 **証明**：
-1. **暗号化**：$c = g^m \cdot r^n \bmod n^2$
+1. **暗号化**：
+   $$c = g^m \cdot r^n \bmod n^2$$
 
 2. **復号化**：
    $$m' = L(c^{\lambda(n)} \bmod n^2) \cdot \mu \bmod n$$
@@ -452,10 +453,22 @@ $$\lambda(n) = \text{lcm}(\lambda(p_1^{e_1}), \lambda(p_2^{e_2}), \ldots, \lambd
    $$c^{\lambda(n)} \equiv g^{m\lambda(n)} \pmod{n^2}$$
 
 4. **$L$ 関数の計算**：
-   $$L(g^{m\lambda(n)} \bmod n^2) = \frac{g^{m\lambda(n)} - 1}{n} = m \cdot \frac{g^{\lambda(n)} - 1}{n} = m \cdot L(g^{\lambda(n)} \bmod n^2)$$
+  ```math
+  \begin{align}
+  L(g^{m\lambda(n)} \bmod n^2) &= \frac{g^{m\lambda(n)} - 1}{n} \\
+    &= m \cdot \frac{g^{\lambda(n)} - 1}{n} \\
+    &= m \cdot L(g^{\lambda(n)} \bmod n^2)
+  \end{align}
+  ```
 
 5. **最終結果**：
-   $$m' = m \cdot L(g^{\lambda(n)} \bmod n^2) \cdot \mu = m \cdot L(g^{\lambda(n)} \bmod n^2) \cdot (L(g^{\lambda(n)} \bmod n^2))^{-1} = m$$
+  ```math
+  \begin{align}
+   m' &= m \cdot L(g^{\lambda(n)} \bmod n^2) \cdot \mu \\
+      &= m \cdot L(g^{\lambda(n)} \bmod n^2) \cdot (L(g^{\lambda(n)} \bmod n^2))^{-1} \\
+      &= m
+  \end{align}
+  ```
 
 したがって、$m' = m$ が成り立ち、正当性が証明されます。
 
@@ -469,10 +482,14 @@ $$\lambda(n) = \text{lcm}(\lambda(p_1^{e_1}), \lambda(p_2^{e_2}), \ldots, \lambd
    $$c_1 \cdot c_2 = (g^{m_1} \cdot r_1^n) \cdot (g^{m_2} \cdot r_2^n) = g^{m_1 + m_2} \cdot (r_1 \cdot r_2)^n \bmod n^2$$
 
 2. **復号化**：
-   $$\text{Dec}(\text{sk}, c_1 \cdot c_2) = L((c_1 \cdot c_2)^{\lambda(n)} \bmod n^2) \cdot \mu \bmod n$$
-   $$= L(g^{(m_1 + m_2)\lambda(n)} \bmod n^2) \cdot \mu \bmod n$$
-   $$= (m_1 + m_2) \cdot L(g^{\lambda(n)} \bmod n^2) \cdot \mu \bmod n$$
-   $$= m_1 + m_2 \bmod n$$
+  ```math
+  \begin{align}
+   \text{Dec}(\text{sk}, c_1 \cdot c_2) &= L((c_1 \cdot c_2)^{\lambda(n)} \bmod n^2) \cdot \mu \bmod n \\
+   &= L(g^{(m_1 + m_2)\lambda(n)} \bmod n^2) \cdot \mu \bmod n \\
+   &= (m_1 + m_2) \cdot L(g^{\lambda(n)} \bmod n^2) \cdot \mu \bmod n \\
+   &= (m_1 + m_2) \bmod n
+   \end{align}
+  ```
 
 したがって、暗号文の積が平文の和に対応します。
 
@@ -516,20 +533,16 @@ Paillier暗号を使った電子投票システムでは、投票者が投票内
 
 **プライバシー保護計算** の分野では、医療データの分析や金融データの統計処理など、機密性の高いデータを活用した新しいサービスが期待されています。
 
-# 4.10 公開鍵暗号の世界：理論から実践への旅路
+# 4.10 まとめ
 
-## 学んだことの全体像
+## 今回学んだこと
 
-今回の記事では、公開鍵暗号の世界を、数学的基盤から実践的応用まで一貫して学んできました。素因数分解問題という古典的な数学的問題から始まり、オイラーの定理という18世紀の数学的発見を活用してRSA暗号を構築し、さらにその安全性を向上させるOAEPパディング、そして署名への応用とFDH署名による安全性の確立まで、一つの理論体系として理解できたはずです。
+今回の記事では、公開鍵暗号のうち、RSA暗号の数学的基盤から実践的応用まで学んできました。素因数分解問題という古典的な数学的問題から始まり、オイラーの定理という18世紀の数学的発見を活用してRSA暗号を構築し、さらにその安全性を向上させるOAEPパディング、そして署名への応用とFDH署名による安全性の確立までを見てきました。
 
-さらに、単一秘密鍵のリスクから分散署名による解決策、そして暗号文のまま計算ができる準同型暗号という革新的な技術まで、現代暗号技術の多様性と可能性を探求しました。
-
-## 理論と実践の架け橋
-
-学んだ理論が実際の技術としてどのように活用されているかも確認しました。TLS/SSLでの認証、ソフトウェア署名、暗号資産のセキュリティ、そしてプライバシー保護計算など、私たちの日常的なデジタル生活を支える技術の背後にある数学的基盤を理解できたはずです。
+さらに、単一秘密鍵のリスクから分散署名による解決策、そして暗号文のまま計算ができる準同型暗号という革新的な技術の概要も学びました。
 
 ## 次回への展望：離散対数問題の世界
 
-「[第5回　公開鍵暗号2（離散対数問題に基づく暗号）](https://qiita.com/naoki_hayashida/items/55abc096c40f1ae6a19f)」では、素因数分解問題と並ぶ現代暗号のもう一つの重要な数学的基盤である **離散対数問題** について学びます。Diffie-Hellman鍵共有の詳細、ElGamal暗号の仕組みと安全性、そして楕円曲線暗号（ECDH、ECDSA）など、RSA暗号とは異なるアプローチによる公開鍵暗号の世界を探求します。
+「[第5回　公開鍵暗号2（離散対数問題に基づく暗号）](https://qiita.com/naoki_hayashida/items/55abc096c40f1ae6a19f)」では、素因数分解問題と並ぶ現代暗号のもう一つの重要な数学的基盤である **離散対数問題** とそれに基づく暗号技術について学びます。Diffie-Hellman鍵共有の詳細、ElGamal暗号の仕組みと安全性、そして楕円曲線暗号（ECDH、ECDSA）など、RSA暗号とは異なるアプローチによる公開鍵暗号を学んでいきます。
 
 楕円曲線暗号は、RSA暗号よりも短い鍵長で同等の安全性を実現できるため、現在の暗号技術で広く使用されています。TLS 1.3の鍵共有（ECDHE）、ビットコイン・イーサリアムでの署名、SSH接続における鍵交換など、現代の暗号技術の核心となる技術を、理論と実装の両面から詳しく学んでいきます。
