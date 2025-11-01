@@ -10,10 +10,14 @@ The project follows a dual-structure approach:
 - **Documentation**: `docs/<category>/` contains theoretical explanations, security considerations, and references
 - **Implementation**: `src/<category>/` contains minimal TypeScript implementations using Node.js crypto APIs
 - **Categories**: symmetric encryption, asymmetric encryption, hash functions, MAC (Message Authentication Code), and digital signatures
+- **Articles**: `articles/` contains in-depth articles about advanced cryptographic topics
 
 Each category has its own subdirectory with:
 - `docs/<category>/README.md` - theory and explanation
 - `src/<category>/*.ts` - practical TypeScript implementations
+
+Special documentation:
+- `docs/oss-libraries.md` - Comprehensive list of OSS libraries for advanced cryptography (pairing, ABE, searchable encryption, group/ring signatures)
 
 ## Development Commands
 - **Development (watch mode)**: `npm run dev` - runs `tsx watch src/index.ts`

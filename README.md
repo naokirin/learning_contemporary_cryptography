@@ -10,6 +10,7 @@
   - `docs/hash/`: ハッシュ関数（SHA-256 など）
   - `docs/mac/`: メッセージ認証コード（HMAC など）
   - `docs/signature/`: 署名（RSA-PSS / Ed25519 など）
+  - `docs/oss-libraries.md`: 高機能暗号のOSSライブラリ一覧
 - `src/`: TypeScript での最小サンプル実装
   - `src/symmetric/aes_gcm.ts`
   - `src/symmetric/aes-scratch.ts` - AES-128のスクラッチ実装（学習用）
@@ -17,6 +18,9 @@
   - `src/hash/sha256.ts`
   - `src/mac/hmac_sha256.ts`
   - `src/signature/ed25519.ts`
+- `articles/`: 暗号技術に関する連載記事
+  - 第6回: 高機能暗号 - 未来の暗号技術
+  - 第7回: ゼロ知識証明とプライバシー保護技術の展望
 
 ## セットアップと利用
 - 開発（ウォッチ）: `npm run dev`
