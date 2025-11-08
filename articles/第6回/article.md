@@ -445,51 +445,129 @@ Moneroなどの暗号資産では、リング署名を活用してプライバ�
 
 量子計算機の登場により、現在の高機能暗号も解読される可能性があります。そのため、量子耐性暗号との組み合わせが重要です。格子ベースの高機能暗号、多変数多項式ベースの高機能暗号、ハッシュベースの高機能暗号などの研究が進められています。
 
-# 6.7 実装されているライブラリについて
+# 6.7 実運用・研究事例
 
-ここまでに紹介した暗号技術が実装されているOSSのライブラリの一部を参考として紹介します。ただし、紹介したライブラリが一般用途において安全である保証はなく、実際の本番環境利用については、用途に応じた最新の安全性評価や多角的な検証を踏まえて利用するようにしてください。
+本節では、高機能暗号技術が実際のサービスやプロダクトでどのように応用されているか、または研究段階でどのような取り組みが行われているかを紹介します。高機能暗号は実用化が進みつつある分野であり、完全に実運用されている事例は限られていますが、様々な研究プロジェクトや実証実験が進められています。
 
-## 1. 双線型ペアリング (Bilinear Pairing)
+## 属性ベース暗号（ABE）の事例
 
-| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
-|:------------|:-----|:----------------|:----------------|:---------|
-| **pairing** | Rust | [zkcrypto/pairing](https://github.com/zkcrypto/pairing) | ペアリング暗号の基本的なトレイトを定義するRustのコアライブラリ。多くのエコシステムで利用されている。 | アクティブ |
-| **Kyber** | Go | [dedis/kyber](https://github.com/dedis/kyber) | スイスの大学EPFL発の暗号ライブラリ。`pairing/bn256`でBN256曲線上のペアリングをサポート。 | アクティブ |
-| **py_ecc** | Python | [ethereum/py_ecc](https://github.com/ethereum/py_ecc) | Ethereumのコンセンサスレイヤーで使用。BLS12-381を含む複数のペアリング曲線に対応。実戦でテスト済み。 | アクティブ |
-| **MIRACL Core** | C/C++, JS(WASM) | [miracl/core](https://github.com/miracl/core) | 高速な暗号ライブラリ。多くのペアリング曲線に対応し、WebAssemblyにコンパイルしてJavaScriptからも利用可能。 | アクティブ |
-| **AMCL** | C, Go, Rust, etc. | [miracl/amcl](https://github.com/miracl/core) | Apache Milagro Core Cryptographic Library | アクティブ |
+### 研究・実証実験
 
-## 2. 属性ベース暗号 (ABE: Attribute-Based Encryption)
+**産業技術総合研究所（AIST）の研究**
 
-| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
-|:------------|:-----|:----------------|:----------------|:---------|
-| **circl** | Go | [cloudflare/circl](https://github.com/cloudflare/circl) | Cloudflareによる高性能暗号ライブラリ。`abe/cpabe` パッケージでCP-ABEを実装。 | アクティブ |
-| **gofe** | Go | [fentec-project/gofe](https://github.com/fentec-project/gofe) | FAME (CP-ABE) と GPSW (KP-ABE) を実装した関数型暗号ライブラリ。GoでABEを試す際の有力候補。 | メンテナンス中 |
+産業技術総合研究所では、属性ベース暗号に関連する放送型暗号の新設計に成功しました。この研究では、長年の未解決問題であった効率的な放送型暗号を、二つの代数構造を組み合わせることで実現しています。放送型暗号は、属性ベース暗号と同様に、複数の受信者に対して柔軟なアクセス制御を可能にする技術です。
 
-## 3. 検索可能暗号 (Searchable Encryption)
+https://www.aist.go.jp/aist_j/highlights/2023/vol3/index.html
 
-| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
-|:------------|:-----|:----------------|:----------------|:---------|
-| **Acra** | Go, Python, Ruby | [cossacklabs/acra](https://github.com/cossacklabs/acra) | データベースセキュリティスイート。SQL/NoSQL対応の透過的な暗号化と検索可能暗号化機能を提供。実用性が高い。 | アクティブ |
+**クラウドストレージでの医療データ管理**
 
-## 4. グループ署名 (Group Signature)
+医療分野では、患者データを暗号化してクラウドに保存し、属性ベース暗号により医師や看護師の属性に基づいてアクセス制御を行う研究が進められています。例えば、「主治医」かつ「心臓病専門」の属性を持つ医師のみが特定の患者データにアクセスできるような仕組みが研究されています。
 
-| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
-|:------------|:-----|:----------------|:----------------|:---------|
-| **paring-crypto** | Rust, JS(WASM) | [mattrglobal/paring-crypto](https://github.com/mattrglobal/pairing_crypto) | BBS+署名のRust実装。WASMを介してJS/TSからも利用可能。BLS12-381曲線をサポート。 | アクティブ |
-| **bbs-signature-go** | Go | [trustbloc/bbs-signature-go](https://github.com/trustbloc/bbs-signature-go) | Hyperledger Ariesの一部として開発されたBBS+署名のGo実装。 | アクティブ |
-| **@docknetwork/crypto-wasm** | TypeScript/WASM | [docknetwork/crypto-wasm](https://github.com/docknetwork/crypto-wasm) | Dock's Rust暗号ライブラリのWASMラッパー。BBS+署名、BLS12-381曲線をサポート。 | アクティブ |
-| **@herculas/bbs-signature** | TypeScript/WASM | [JSR Package](https://jsr.io/@herculas/bbs-signature) | RustからWASMにコンパイルされたBBS+実装。BBS Signature Scheme v8準拠。 | アクティブ |
+**企業データのセキュアな共有**
 
-## 5. リング署名 (Ring Signature)
+複数の企業間でデータを共有する際に、属性ベース暗号を用いることで、データ暗号化後も細粒度のアクセス制御を維持できる研究が行われています。これにより、クラウドプロバイダーにデータ内容を開示せずに、柔軟な権限管理が可能になります。
 
-| ライブラリ名 | 言語 | GitHubリポジトリ | 特徴・使いやすさ | 開発状況 |
-|:------------|:-----|:----------------|:----------------|:---------|
-| **monero** | C++ | [monero-project/monero](https://github.com/monero-project/monero) | Monero公式実装。CLSAG, MLSAGを含む最も信頼性の高いリング署名実装。 | 非常に高 |
-| **nazgul** | Rust | [edwinhere/nazgul](https://github.com/edwinhere/nazgul) | SAG, bLSAG, MLSAG, CLSAG を実装。Zero to Monero 2.0のChapter 3に基づく。Ristretto曲線使用。 | アクティブ |
-| **MLSAG** | Rust | [crate-crypto/MLSAG](https://github.com/crate-crypto/MLSAG) | MLSAG実装（CLSAGの基礎）。105 stars。監査未実施のため利用は自己責任。 | 中 |
-| **fujisaki-ringsig** | Rust | [rozbb/fujisaki-ringsig](https://github.com/rozbb/fujisaki-ringsig) | Fujisaki-Suzuki Traceable Ring Signature実装。curve25519-daleクライブラリ使用。 | アクティブ |
-| **ring-signatures-rs** | Rust | [arnaucube/ring-signatures-rs](https://github.com/arnaucube/ring-signatures-rs) | bLSAG（Back's Linkable SAG）のRust実装。arkworks使用。学習目的。 | アクティブ |
+## 検索可能暗号（SE）の事例
+
+### 関連技術：準同型暗号の実装
+
+検索可能暗号に関連する技術として、準同型暗号（Homomorphic Encryption）の実装が進んでいます。準同型暗号は、暗号化されたデータに対して計算を行える技術で、検索可能暗号と同様にプライバシー保護と利便性を両立します。
+
+**Microsoft SEAL**
+
+Microsoftは、完全準同型暗号ライブラリ「Microsoft SEAL」をオープンソースで公開しています。このライブラリは、暗号化されたデータに対して加算や乗算などの演算を行うことができ、検索や集計処理に応用可能です。
+
+https://github.com/microsoft/SEAL
+
+**Intel Homomorphic Encryption (HE) Toolkit**
+
+Intelは、準同型暗号の実装と最適化を行うツールキット「Intel HE Toolkit」を提供しています。このツールキットは、ハードウェアアクセラレーションを活用して、暗号化データの計算を高速化します。
+
+https://github.com/IntelLabs/he-toolkit
+
+### 研究・実証実験
+
+**金融業界での秘密計算**
+
+金融機関では、暗号化されたデータに対して計算を行う秘密計算技術の実証実験が進められています。銀行5行が協力し、プライバシー保護連合学習技術「DeepProtect」を用いて、各銀行が持つデータを共有せずに共同で機械学習モデルを構築する実験が行われました。
+
+https://logmi.jp/main/technology/330166
+
+**Acraによるデータベース暗号化**
+
+Cossack Labsが開発する「Acra」は、データベースの透過的な暗号化と検索可能暗号化機能を提供するオープンソースツールです。SQL/NoSQLデータベースに対応し、暗号化されたデータに対して検索を実行できます。
+
+https://github.com/cossacklabs/acra
+
+## グループ署名の事例
+
+### BBS+署名とVerifiable Credentials
+
+**W3C Verifiable Credentials標準**
+
+W3C（World Wide Web Consortium）では、デジタルIDとVerifiable Credentials（検証可能なクレデンシャル）の標準化が進められています。この中で、BBS+署名という高機能な署名技術が検討されています。BBS+署名は、選択的開示（Selective Disclosure）機能を持ち、必要な属性情報のみを開示しながら署名の正当性を証明できます。
+
+https://www.w3.org/TR/vc-data-model/
+
+**デジタルウォレットでの応用**
+
+デジタルウォレットアプリケーションでは、BBS+署名を用いることで、ユーザーが自身の属性情報（年齢、資格、会員資格など）を選択的に開示しながら、その情報の正当性を証明できます。例えば、年齢確認が必要なサービスでは、生年月日全体ではなく「18歳以上」という情報のみを開示できます。
+
+### 実装ライブラリの活用
+
+**Mattr、Dock Network、TrustBloc**
+
+Hyperledger Ariesプロジェクトや、Mattr、Dock Network、TrustBlocなどの組織が、BBS+署名を実装したライブラリを開発しています。これらのライブラリは、デジタルIDシステムや分散型IDの実装に活用されています。
+
+https://github.com/mattrglobal/pairing_crypto
+
+https://github.com/trustbloc/bbs-signature-go
+
+## リング署名の事例
+
+### Monero暗号資産での実装
+
+**CLSAGリング署名**
+
+Moneroは、プライバシーを重視した暗号資産として、リング署名技術を中核に採用しています。2020年以降、Moneroは「CLSAG (Concise Linkable Spontaneous Anonymous Group)」という効率的なリング署名方式を実装しています。CLSAGにより、取引の送信者を特定することが困難になり、取引のプライバシーが保護されます。
+
+Moneroでは、取引を行う際に、実際の送信者の公開鍵と他の複数のユーザーの公開鍵を混ぜ合わせてリングを構成し、リング内の誰かが送信者であることは証明されますが、具体的な送信者は特定できません。
+
+https://www.getmonero.org/
+
+https://github.com/monero-project/monero
+
+**ステルスアドレスとの組み合わせ**
+
+Moneroでは、リング署名に加えて「ステルスアドレス」という技術を組み合わせることで、受信者のプライバシーも保護しています。これにより、送信者・受信者・送金額の全てが秘匿され、高いプライバシー保護を実現しています。
+
+### 研究段階の応用
+
+**電子投票システム**
+
+リング署名を用いた電子投票システムの研究が、各国の大学や研究機関で進められています。有権者が自身の秘密鍵と有権者リストを使ってリング署名を生成することで、投票の匿名性と正当性を両立できます。
+
+**匿名での内部告発システム**
+
+組織内の不正を告発する内部告発システムにおいて、リング署名を用いることで、告発者が組織のメンバーであることを証明しつつ、その身元を保護する研究が行われています。
+
+## 実用化に向けた課題と展望
+
+高機能暗号の実用化には、以下の課題があります。
+
+**計算コストの削減**
+
+高機能暗号は従来の暗号よりも計算コストが高いため、実用的な性能を実現するためのハードウェアアクセラレーションやアルゴリズム最適化が重要です。
+
+**標準化の推進**
+
+高機能暗号の相互運用性を確保するため、国際標準化機構（ISO/IEC）やIETFなどでの標準化が進められています。
+
+**セキュリティ評価の充実**
+
+高機能暗号のセキュリティ特性を厳密に評価し、実用的な安全性を保証するための研究が継続的に行われています。
+
+これらの課題に対する取り組みが進むことで、高機能暗号の実用化がさらに加速すると期待されています。
 
 # 6.8 まとめ
 
@@ -501,17 +579,19 @@ Moneroなどの暗号資産では、リング署名を活用してプライバ�
 
 ## 主要な技術の特徴
 
-**属性ベース暗号** は、ユーザーの属性に基づいて柔軟なアクセス制御を実現し、中央集権的な権限管理が不要になります。
+**属性ベース暗号** は、ユーザーの属性に基づいて柔軟なアクセス制御を実現し、中央集権的な権限管理が不要になります。産業技術総合研究所の研究や医療データ管理の研究など、実用化に向けた取り組みが進められています。
 
-**検索可能暗号** は、暗号化されたデータに対して検索を実行でき、プライバシー保護と利便性を両立します。
+**検索可能暗号** は、暗号化されたデータに対して検索を実行でき、プライバシー保護と利便性を両立します。Microsoft SEALやIntel HE Toolkitなどの準同型暗号ライブラリ、金融業界でのDeepProtect実証実験など、関連技術の実装が進んでいます。
 
-**グループ署名・リング署名** は、署名の正当性を保証しつつ、署名者の匿名性を保護します。
+**グループ署名・リング署名** は、署名の正当性を保証しつつ、署名者の匿名性を保護します。W3CのVerifiable CredentialsでのBBS+署名標準化、Moneroでの実装など、実用化が最も進んでいる分野です。
 
 ## 技術的基盤
 
 これらの高機能暗号の実現には、双線型ペアリングや格子暗号などの数学的構造が重要な役割を果たします。特に双線型ペアリングは、楕円曲線上の特殊な写像として、属性ベース暗号やグループ署名の実現に不可欠です。
 
-## 今後の展望
+## 実用化の現状と今後の展望
+
+今回紹介した実運用・研究事例から、高機能暗号の実用化は段階的に進んでいることがわかります。リング署名はMoneroで既に実運用されており、BBS+署名もW3C標準化とともに実装が進んでいます。一方、属性ベース暗号や検索可能暗号は研究段階が中心ですが、関連する準同型暗号などの技術で実証実験が行われています。
 
 高機能暗号は、計算コストの高さや実装の複雑さなどの課題がありますが、ハードウェア加速やアルゴリズム最適化により、実用化が進んでいます。また、量子計算機の脅威に対応するため、量子耐性暗号との組み合わせも重要な研究分野です。
 
