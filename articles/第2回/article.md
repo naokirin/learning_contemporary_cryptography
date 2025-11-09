@@ -310,7 +310,11 @@ Rainbow Tableは、Hellmanの手法を改良した攻撃手法で、Oechslinに�
 
 ## ブロック暗号の理論的保証の限界
 
-現代のブロック暗号（AESなど）は、現在知られている攻撃手法に対して高い安全性を提供していますが、**理論的に完全な安全性を保証することは不可能**です。この限界について見ていきましょう。
+ブロック暗号への個別の攻撃手法を学んだところで、重要な問いに直面します。
+これらの攻撃をすべて防げば、ブロック暗号は完全に安全になるのでしょうか？
+答えは「いいえ」です。
+
+現代のブロック暗号（AESなど）は、現在知られている攻撃手法に対して高い安全性を提供していますが、**理論的に完全な安全性を保証することは不可能**です。この重要な事実は、暗号技術の限界を理解し、適切なセキュリティ設計を行う上で不可欠です。この限界について見ていきましょう。
 
 ### なぜ理論的保証が不可能なのか
 
@@ -577,45 +581,33 @@ AESは **SPN構造（Substitution-Permutation Network）** を採用していま
 flowchart TB
     A[平文ブロック<br/>128ビット] --> B[初期鍵加算<br/>state = P ⊕ K₀]
     
-    B --> H{最終ラウンド？}
-    H -->|No| SA
-    H -->|Yes| SB
-
-    subgraph SA[N-1ラウンド]
-      D[SubBytes]
-      E
-      F
-      G
-    end
-
-    subgraph SB[最終ラウンド]
-      J[SubBytes]
-      K
-      L
-    end
+    B --> C[ラウンド1〜N-1<br/>繰り返し処理]
     
-    D --> E[ShiftRows]
-    E --> F[MixColumns]
-    F --> G[AddRoundKey]
-    G --> H
+    C --> D[SubBytes<br/>バイト置換]
+    D --> E[ShiftRows<br/>行シフト]
+    E --> F[MixColumns<br/>列混合]
+    F --> G[AddRoundKey<br/>鍵加算]
+    G --> C
     
-    J --> K[ShiftRows]
-    K --> L[AddRoundKey]
+    C --> H[最終ラウンドN]
+    
+    H --> J[SubBytes<br/>バイト置換]
+    J --> K[ShiftRows<br/>行シフト]
+    K --> L[AddRoundKey<br/>鍵加算<br/>※MixColumnsなし]
     
     L --> M[暗号文ブロック<br/>128ビット]
     
     style A fill:#e1f5fe
     style M fill:#f3e5f5
+    style C fill:#ffeeee
     style D fill:#fff3e0
     style E fill:#fff3e0
     style F fill:#fff3e0
     style G fill:#fff3e0
+    style H fill:#eeffee
     style J fill:#fff3e0
     style K fill:#fff3e0
     style L fill:#fff3e0
-
-    style SA fill:#ffeeee
-    style SB fill: #eeffee
 ```
 
 各ラウンドの処理：
@@ -971,20 +963,22 @@ flowchart TD
 
 **暗号化と認証を同時に提供** する **AEAD（Authenticated Encryption with Associated Data）** モードです。
 
+GCMモードは、CTRモードによる暗号化と、**GHASH**と呼ばれる認証関数を組み合わせたモードです。GHASHは、**Galois（ガロア）体GF(2^128)上の演算**を用いてメッセージ認証コードを生成します。Galois体は有限体の一種で、暗号技術において高速な演算を実現するための数学的構造です。GHASHは、暗号文と関連データ（AAD）を入力として受け取り、認証タグを生成することで、データの改ざん検出を可能にします。
+
 ```mermaid
 flowchart TD
-    P[平文] --> CTR[CTRモード暗号化]
+    P[平文] --> CTR[CTRモード<br/>で暗号化]
     CTR --> C[暗号文]
     
-    P --> GHASH[GHASH認証<br/>Galois体演算]
-    AAD[関連データ<br/>AAD] --> GHASH
+    P --> GHASH[認証処理<br/>GHASH]
+    AAD[関連データ<br/>暗号化しないが<br/>認証したいデータ] --> GHASH
     C --> GHASH
-    GHASH --> TAG[認証タグ]
+    GHASH --> TAG[認証タグ<br/>改ざん検出用]
     
     K[共通鍵K] --> CTR
     K --> GHASH
     
-    C --> OUT[出力: 暗号文 + 認証タグ]
+    C --> OUT[出力:<br/>暗号文 + 認証タグ]
     TAG --> OUT
     
     style P fill:#e1f5fe
@@ -996,7 +990,7 @@ flowchart TD
 
 **特徴**
 - **機密性と完全性**: 暗号化と同時にメッセージ認証も実現
-- **高速**: ハードウェア実装で非常に高速
+- **高速**: ハードウェア実装で非常に高速（Galois体演算の並列処理が可能）
 - **関連データ**: 暗号化しないが認証したいデータも保護可能
 
 **利点**
@@ -1202,22 +1196,17 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    PF[平文フレーム] --> CCMP
+    PF[平文フレーム] --> CCMP[CCMP処理<br/>CTR暗号化 + CBC-MAC認証]
     CCMP --> CF[暗号化フレーム]
-    CCMP --> MIC[MIC<br/>メッセージ認証コード]
+    CCMP --> MIC[MIC<br/>メッセージ認証コード<br/>改ざん検出用]
     
     WPA2_KEY[WPA2の鍵管理] --> CCMP
     
-    CF --> OUTPUT[出力: 暗号化フレーム + MIC]
+    CF --> OUTPUT[出力:<br/>暗号化フレーム + MIC]
     MIC --> OUTPUT
     
-    subgraph CCMP[CCMP]
-        direction TB
-        CTR[CTR暗号化<br/>データ部分] --> ENCRYPTED[暗号化データ]
-        CBC_MAC[CBC-MAC<br/>認証コード生成] --> AUTH_TAG[認証タグ]
-    end
-    
     style PF fill:#e1f5fe
+    style CCMP fill:#fff3e0
     style CF fill:#f3e5f5
     style MIC fill:#e8f5e8
     style WPA2_KEY fill:#fff3e0

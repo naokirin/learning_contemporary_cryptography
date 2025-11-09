@@ -69,7 +69,7 @@ NISTは、2022年7月に選定を発表し、2024年8月に以下を正式標準
 また、以下のアルゴリズムも選定されており、標準化作業が進行中です。
 - **FN-DSA（FIPS 206、旧Falcon）** ：ディジタル署名の代替標準（標準化作業中）
 
-また、2025年3月に標準化予定のアルゴリズムとしてHQCが追加されました。
+また、2025年3月にHQCが標準化されることが決定しました。
 - **HQC** ：符号ベース暗号による鍵カプセル化メカニズム
 
 # 7.3 格子暗号（Lattice-Based Cryptography）
@@ -111,7 +111,7 @@ $L = \{ \sum_{i=1}^{n} x_i \mathbf{b}_i : x_i \in \mathbb{Z} \}$
 
 1. **最短ベクトル問題（SVP）** ：格子内の最短非零ベクトルを見つける
 2. **最近ベクトル問題（CVP）** ：与えられた点に最も近い格子点を見つける（SVPより一般的）
-![耐量子暗号-格子の例2.drawio.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3622214/3f6b5aba-99ae-45a1-ac8d-a38cf732972d.png)
+![耐量子暗号-格子の例3.drawio.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/3622214/3f6b5aba-99ae-45a1-ac8d-a38cf732972d.png)
 
 ## 学習関数問題（LWE）
 
