@@ -435,9 +435,9 @@ flowchart TD
     H --> I[ラウンド16]
     I --> C
     
-    style A fill:#e1f5fe
-    style E fill:#f3e5f5
-    style C fill:#fff3e0
+    style A fill:#e1f5fe, color:#333
+    style E fill:#f3e5f5, color:#333
+    style C fill:#fff3e0, color:#333
 ```
 
 各ラウンドでは、ブロックを左右32ビットずつに分割し、右半分に複雑な変換を施してから左半分とXORを取る操作を繰り返します。
@@ -450,14 +450,14 @@ Feistel構造は、Horst Feistelによって1970年代に考案された暗号�
 
 Feistel構造では、各ラウンドで以下の処理を行います。
 
-1. **ブロック分割**: 64ビットのブロックを左右32ビットずつに分割（L_i, R_i）
-2. **右半分の処理**: 右半分R_iをラウンド関数Fで処理
-3. **XOR演算**: 処理結果と左半分L_iをXOR
+1. **ブロック分割**: 64ビットのブロックを左右32ビットずつに分割（$L_i$, $R_i$）
+2. **右半分の処理**: 右半分$R_i$をラウンド関数Fで処理
+3. **XOR演算**: 処理結果と左半分$L_i$をXOR
 4. **左右交換**: 次のラウンドのために左右を交換
 
 **ラウンド処理の数式表現**
 
-i番目のラウンドの処理は以下のように表されます。
+$i$番目のラウンドの処理は以下のように表されます。
 
 ```math
 \begin{align}
@@ -528,7 +528,7 @@ DESは暗号技術史上重要な役割を果たしましたが、現代の攻�
 
 #### ブルートフォース攻撃（Brute Force Attack）
 
-DESの最大の弱点は56ビットという短い鍵長です。1998年、Electronic Frontier Foundation（EFF）は専用ハードウェア「DES Cracker」を開発し、わずか22時間でDES鍵を破ることに成功しました。この攻撃は、DESの鍵空間が $2^56 ≈ 7.2 × 10^16$ 通りしかないことを利用したものです。
+DESの最大の弱点は56ビットという短い鍵長です。1998年、Electronic Frontier Foundation（EFF）は専用ハードウェア「DES Cracker」を開発し、わずか22時間でDES鍵を破ることに成功しました。この攻撃は、DESの鍵空間が $2^{56} ≈ 7.2 × 10^{16}$ 通りしかないことを利用したものです。
 
 現代の汎用コンピュータでも、DES鍵の全探索は数時間から数日で可能となっており、実用的な暗号としての価値を完全に失っています。この攻撃に対する唯一の対策は、**AESへの完全な移行**です。
 
@@ -597,17 +597,17 @@ flowchart TB
     
     L --> M[暗号文ブロック<br/>128ビット]
     
-    style A fill:#e1f5fe
-    style M fill:#f3e5f5
-    style C fill:#ffeeee
-    style D fill:#fff3e0
-    style E fill:#fff3e0
-    style F fill:#fff3e0
-    style G fill:#fff3e0
-    style H fill:#eeffee
-    style J fill:#fff3e0
-    style K fill:#fff3e0
-    style L fill:#fff3e0
+    style A fill:#e1f5fe, color:#333
+    style M fill:#f3e5f5, color:#333
+    style C fill:#ffeeee, color:#333
+    style D fill:#fff3e0, color:#333
+    style E fill:#fff3e0, color:#333
+    style F fill:#fff3e0, color:#333
+    style G fill:#fff3e0, color:#333
+    style H fill:#eeffee, color:#333
+    style J fill:#fff3e0, color:#333
+    style K fill:#fff3e0, color:#333
+    style L fill:#fff3e0, color:#333
 ```
 
 各ラウンドの処理：
@@ -648,7 +648,7 @@ s_{30} & s_{31} & s_{32} & s_{33}
 **SubBytes（置換）**
 - **目的**: 非線形性の導入
 - **処理**: 各バイトをS-boxで置換
-- **数学的表現**: $s'_{ij} = \text{S-box}(s_{ij})$
+- **数学的表現**: $s'\_{ij} = \text{S-box}(s_{ij})$
 - **特徴**: 8ビット→8ビットの非線形変換
 
 **ShiftRows（行シフト）**
@@ -664,24 +664,26 @@ $$\text{ShiftRows}(s_{ij}) = s_{i,(j+i) \bmod 4}$$
 
 **MixColumns（列混合）**
 - **目的**: 列間の拡散
-- **処理**: 各列にGF(2^8)上の行列乗算を適用
+- **処理**: 各列に$GF(2^8)$上の行列乗算を適用
 - **数学的表現**: $c'_i = M \times c_i$ （Mは固定の4×4行列）
 - **特徴**: 線形変換による拡散効果
 
 **固定行列M**:
-$$M = \begin{bmatrix}
+```math
+M = \begin{bmatrix}
 02 & 03 & 01 & 01 \\
 01 & 02 & 03 & 01 \\
 01 & 01 & 02 & 03 \\
 03 & 01 & 01 & 02
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 ここで、各要素はGF(2^8)上の値です。
 
 **AddRoundKey（鍵加算）**
 - **目的**: 鍵の影響を導入
 - **処理**: 状態行列とラウンド鍵のXOR
-- **数学的表現**: $s'_{ij} = s_{ij} \oplus k_{ij}$
+- **数学的表現**: $s'\_{ij} = s_{ij} \oplus k_{ij}$
 - **特徴**: 単純なXOR演算
 
 **SPN構造の利点**
@@ -843,13 +845,13 @@ flowchart LR
     K --> E2
     K --> E3
     
-    style P1 fill:#e1f5fe
-    style P2 fill:#e1f5fe
-    style P3 fill:#e1f5fe
-    style C1 fill:#f3e5f5
-    style C2 fill:#f3e5f5
-    style C3 fill:#f3e5f5
-    style K fill:#fff3e0
+    style P1 fill:#e1f5fe, color:#333
+    style P2 fill:#e1f5fe, color:#333
+    style P3 fill:#e1f5fe, color:#333
+    style C1 fill:#f3e5f5, color:#333
+    style C2 fill:#f3e5f5, color:#333
+    style C3 fill:#f3e5f5, color:#333
+    style K fill:#fff3e0, color:#333
 ```
 
 **問題点**
@@ -882,14 +884,14 @@ flowchart TD
     K --> E2
     K --> E3
     
-    style P1 fill:#e1f5fe
-    style P2 fill:#e1f5fe
-    style P3 fill:#e1f5fe
-    style C1 fill:#f3e5f5
-    style C2 fill:#f3e5f5
-    style C3 fill:#f3e5f5
-    style IV fill:#fff3e0
-    style K fill:#fff3e0
+    style P1 fill:#e1f5fe, color:#333
+    style P2 fill:#e1f5fe, color:#333
+    style P3 fill:#e1f5fe, color:#333
+    style C1 fill:#f3e5f5, color:#333
+    style C2 fill:#f3e5f5, color:#333
+    style C3 fill:#f3e5f5, color:#333
+    style IV fill:#fff3e0, color:#333
+    style K fill:#fff3e0, color:#333
 ```
 
 **特徴**
@@ -935,14 +937,14 @@ flowchart TD
     K --> E2
     K --> E3
     
-    style P1 fill:#e1f5fe
-    style P2 fill:#e1f5fe
-    style P3 fill:#e1f5fe
-    style C1_out fill:#f3e5f5
-    style C2_out fill:#f3e5f5
-    style C3_out fill:#f3e5f5
-    style Nonce fill:#fff3e0
-    style K fill:#fff3e0
+    style P1 fill:#e1f5fe, color:#333
+    style P2 fill:#e1f5fe, color:#333
+    style P3 fill:#e1f5fe, color:#333
+    style C1_out fill:#f3e5f5, color:#333
+    style C2_out fill:#f3e5f5, color:#333
+    style C3_out fill:#f3e5f5, color:#333
+    style Nonce fill:#fff3e0, color:#333
+    style K fill:#fff3e0, color:#333
 ```
 
 **特徴**
@@ -981,11 +983,11 @@ flowchart TD
     C --> OUT[出力:<br/>暗号文 + 認証タグ]
     TAG --> OUT
     
-    style P fill:#e1f5fe
-    style C fill:#f3e5f5
-    style TAG fill:#e8f5e8
-    style AAD fill:#fff3e0
-    style K fill:#fff3e0
+    style P fill:#e1f5fe, color:#333
+    style C fill:#f3e5f5, color:#333
+    style TAG fill:#e8f5e8, color:#333
+    style AAD fill:#fff3e0, color:#333
+    style K fill:#fff3e0, color:#333
 ```
 
 **特徴**
@@ -1053,11 +1055,11 @@ flowchart LR
     
     D --> C
     
-    style A fill:#e1f5fe
-    style B fill:#fff3e0
-    style C fill:#e8f5e8
-    style D fill:#fff3e0
-    style E fill:#ffebee
+    style A fill:#e1f5fe, color:#333
+    style B fill:#fff3e0, color:#333
+    style C fill:#e8f5e8, color:#333
+    style D fill:#fff3e0, color:#333
+    style E fill:#ffebee, color:#333
 ```
 
 #### 1. 鍵生成
@@ -1168,9 +1170,9 @@ flowchart LR
         C --> D[ネットワーク送信]
     end
     
-    style EN fill:#e1f5fe
-    style RW fill:#e1f5fe
-    style VPN fill:#f3e5f5
+    style EN fill:#e1f5fe, color:#333
+    style RW fill:#e1f5fe, color:#333
+    style VPN fill:#f3e5f5, color:#333
 ```
 
 ### ディスク暗号化
@@ -1205,12 +1207,12 @@ flowchart TD
     CF --> OUTPUT[出力:<br/>暗号化フレーム + MIC]
     MIC --> OUTPUT
     
-    style PF fill:#e1f5fe
-    style CCMP fill:#fff3e0
-    style CF fill:#f3e5f5
-    style MIC fill:#e8f5e8
-    style WPA2_KEY fill:#fff3e0
-    style OUTPUT fill:#f3e5f5
+    style PF fill:#e1f5fe, color:#333
+    style CCMP fill:#fff3e0, color:#333
+    style CF fill:#f3e5f5, color:#333
+    style MIC fill:#e8f5e8, color:#333
+    style WPA2_KEY fill:#fff3e0, color:#333
+    style OUTPUT fill:#f3e5f5, color:#333
 ```
 
 **CCMPの特徴**
