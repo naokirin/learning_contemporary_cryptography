@@ -897,3 +897,4 @@ NISTのPQC標準化プロジェクトの完了により、業界標準として�
 * [NIST | Post-Quantum Cryptography Standardization](https://csrc.nist.gov/projects/post-quantum-cryptography)
 * [FIPS 203 Module-Lattice-Based Key-Encapsulation Mechanism Standard](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf)
 [CRYPTREC 2025 NIST標準暗号 格子ベース暗号FIPS 203, 204の数学的構成の解説 | 立教大学・理学部数学科 安田雅哉](https://www.cryptrec.go.jp/symposium/2025_invited1-1.pdf)
+[Cryptography 101 with Alfred Menezes](https://cryptography101.ca/)
